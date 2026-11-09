@@ -1,0 +1,39 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+dist
+build
+.next
+out
+.turbo
+
+# Test outputs
+coverage
+test-results
+playwright-report
+blob-report
+
+# Environment variables
+.env
+.env*.local
+!.env.example
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Database & Docker local volumes
+.docker-data
+
