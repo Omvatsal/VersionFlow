@@ -5,7 +5,7 @@
   "packageManager": "pnpm@9.15.4",
   "scripts": {
     "build": "pnpm --recursive run build",
-    "dev": "pnpm --recursive --parallel run dev",
+    "dev": "node scripts/check-dev-ports.mjs && pnpm --filter @versionflow/web --filter @versionflow/api --parallel run dev",
     "check-types": "pnpm --recursive run check-types",
     "test": "pnpm --recursive run test"
   },

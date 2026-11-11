@@ -1,0 +1,163 @@
+/* [project]/apps/web/app/contract-viewer.css [app-client] (css) */
+.version-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.version-card-toggle {
+  width: 100%;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 18px 20px;
+  display: block;
+}
+
+.version-card-toggle:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: -3px;
+}
+
+.contract-inline, .contract-drawer {
+  color: #ddd;
+  background: #121212;
+  font-size: 13px;
+}
+
+.contract-inline {
+  border-top: 1px solid #303030;
+  margin: 0 2px 2px;
+  padding: 22px 20px 24px;
+}
+
+.contract-inline h2, .contract-drawer h2 {
+  font: 500 21px / 1.2 var(--display);
+  letter-spacing: -.045em;
+  margin: 5px 0 7px;
+}
+
+.contract-subtitle {
+  color: #999;
+  font: 11px / 1.5 var(--mono);
+  margin: 0;
+}
+
+.contract-overview {
+  border-top: 1px solid #2d2d2d;
+  border-bottom: 1px solid #2d2d2d;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 19px 0 22px;
+  padding: 15px 0;
+  display: grid;
+}
+
+.contract-overview span {
+  color: #777;
+  font-size: 10px;
+}
+
+.contract-overview b {
+  color: #eee;
+  font: 500 14px var(--mono);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.contract-inline section, .contract-drawer section {
+  border-top: 1px solid #2d2d2d;
+  margin-top: 22px;
+  padding-top: 18px;
+}
+
+.contract-inline h3, .contract-drawer h3 {
+  font: 500 14px var(--display);
+  margin: 0 0 12px;
+}
+
+.contract-endpoints details, .contract-json {
+  background: #101010;
+  border: 1px solid #2b2b2b;
+  margin: 8px 0;
+}
+
+.contract-endpoints summary, .contract-json summary {
+  color: #ccc;
+  cursor: pointer;
+  padding: 12px 13px;
+  font-size: 12px;
+  list-style: none;
+}
+
+.contract-endpoints summary::-webkit-details-marker {
+  display: none;
+}
+
+.contract-json summary::-webkit-details-marker {
+  display: none;
+}
+
+.contract-endpoints summary strong {
+  width: 58px;
+  color: var(--orange);
+  font: 600 10px var(--mono);
+  display: inline-block;
+}
+
+.contract-endpoints summary code {
+  color: #eee;
+  font: 12px var(--mono);
+}
+
+.contract-endpoints summary span {
+  color: #888;
+  margin-left: 12px;
+  font-size: 11px;
+}
+
+.contract-endpoint-detail {
+  color: #999;
+  padding: 0 13px 14px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.contract-endpoint-detail p {
+  margin: 0 0 10px;
+}
+
+.contract-json summary {
+  color: #aaa;
+}
+
+.contract-json pre, .contract-drawer pre {
+  color: #bbb;
+  white-space: pre-wrap;
+  max-height: 300px;
+  font: 11px / 1.55 var(--mono);
+  background: #0c0c0c;
+  border: 1px solid #292929;
+  margin: 0 13px 13px;
+  padding: 12px;
+  overflow: auto;
+}
+
+@media (max-width: 600px) {
+  .contract-inline {
+    padding: 18px 14px 20px;
+  }
+
+  .contract-overview {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .contract-endpoints summary span {
+    margin: 5px 0 0 58px;
+    display: block;
+  }
+}
+
+/*# sourceMappingURL=apps_web_app_contract-viewer_css_bad6b30c._.single.css.map*/

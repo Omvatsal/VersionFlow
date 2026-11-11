@@ -21,4 +21,4 @@
 - Complete lint configuration and run a clean final verification.
 - Worker status is logged but is not exposed through an HTTP health endpoint.
 
-Product registry functionality, authentication, and speculative domain tables are intentionally excluded.
+API intelligence analysis, repository integrations, and authentication UI wiring in the existing frontend remain future work; the backend schema and authorization foundation are implemented in this milestone.

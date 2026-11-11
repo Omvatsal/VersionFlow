@@ -1,22 +1,14 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import './project-admin.css';
+import './contract-viewer.css';
+import './impact-intelligence.css';
 
 export const metadata: Metadata = {
-  title: 'VersionFlow — API Ecosystem Intelligence',
-  description: 'Developer-first API Ecosystem Intelligence & Lifecycle Platform',
+  title: 'VersionFlow — Change APIs with confidence',
+  description: 'A living map of your APIs, versions, dependencies, and change impact.',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en">
-      <body className="antialiased selection:bg-blue-600 selection:text-white">
-        {children}
-      </body>
-    </html>
-  );
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <html lang="en"><body className="antialiased selection:bg-orange-500 selection:text-black">{children}</body></html>;
 }
-

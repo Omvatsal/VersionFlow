@@ -1,0 +1,19 @@
+import { Body, Controller, Get, Headers, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { randomBytes, timingSafeEqual } from 'crypto';
+import type { Request, Response } from 'express';
+import { z } from 'zod';
+import { AuthGuard, type AuthenticatedRequest } from './auth.guard.js';
+import { AuthService } from './auth.service.js';
+const registerSchema = z.object({ name: z.string().min(1).max(120), email: z.string().email(), password: z.string().min(12).max(200) });
+const loginSchema = z.object({ email: z.string().email(), password: z.string().min(1) });
+@Controller('auth')
+export class AuthController { constructor(private readonly auth: AuthService) {}
+  private cookieOptions(secure: boolean) { return { httpOnly: true, secure, sameSite: 'lax' as const, path: '/' }; }
+  @Post('register') async register(@Body() body: unknown) { return { success: true, data: await this.auth.register(registerSchema.parse(body)) }; }
+  @Post('login') async login(@Body() body: unknown) { const input = loginSchema.parse(body); return { success: true, data: await this.auth.login(input.email, input.password) }; }
+  @Post('refresh') refresh(@Headers('x-refresh-token') token?: string) { if (!token) throw new Error('X-Refresh-Token header required'); return this.auth.refresh(token); }
+  @UseGuards(AuthGuard) @Post('logout') async logout(@Req() request: AuthenticatedRequest, @Res({ passthrough: true }) response: Response) { await this.auth.logout(request.user.sessionId); response.clearCookie('versionflow_access_token', { path: '/' }); response.clearCookie('versionflow_refresh_token', { path: '/' }); return { success: true }; }
+  @UseGuards(AuthGuard) @Get('me') async me(@Req() request: AuthenticatedRequest) { return { success: true, data: await this.auth.currentUser(request.user.id) }; }
+  @Get('google') google(@Res() response: Response) { const state = randomBytes(32).toString('base64url'); const url = this.auth.googleAuthorizationUrl(state); response.cookie('versionflow_oauth_state', state, { ...this.cookieOptions(process.env['NODE_ENV'] === 'production'), maxAge: 10 * 60 * 1000 }); return response.redirect(url); }
+  @Get('google/callback') async googleCallback(@Req() request: Request, @Res() response: Response) { const code = typeof request.query.code === 'string' ? request.query.code : ''; const state = typeof request.query.state === 'string' ? request.query.state : ''; const saved = request.headers.cookie?.split(';').map((part) => part.trim()).find((part) => part.startsWith('versionflow_oauth_state='))?.split('=')[1] ?? ''; if (!code || !state || !saved || state.length !== saved.length || !timingSafeEqual(Buffer.from(state), Buffer.from(saved))) return response.status(400).send('Invalid OAuth state'); try { const result = await this.auth.loginWithGoogle(code); const secure = process.env['NODE_ENV'] === 'production'; response.cookie('versionflow_access_token', result.tokens.accessToken, { ...this.cookieOptions(secure), maxAge: 15 * 60 * 1000 }); response.cookie('versionflow_refresh_token', result.tokens.refreshToken, { ...this.cookieOptions(secure), maxAge: 30 * 24 * 60 * 60 * 1000 }); response.clearCookie('versionflow_oauth_state', { path: '/' }); return response.redirect(`${this.auth.frontendUrl()}/dashboard`); } catch (error: unknown) { const message = error instanceof Error ? error.message : 'Google authentication failed'; return response.redirect(`${this.auth.frontendUrl()}/auth/login?error=${encodeURIComponent(message)}`); } }
+}

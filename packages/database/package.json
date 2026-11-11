@@ -9,7 +9,9 @@
     "check-types": "tsc --noEmit",
     "dev": "tsc --watch",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx src/migrate.ts"
+    "db:migrate": "tsx src/migrate.ts",
+    "db:seed": "tsx src/seed.ts",
+    "db:seed:account-demo": "tsx src/seed-account-demo.ts"
   },
   "dependencies": {
     "@versionflow/shared": "workspace:*",

@@ -1,2 +1,2 @@
-import { OverviewContent } from '@/components/dashboard-shell';
-export default function DashboardPage() { return <OverviewContent />; }
+import { WorkspaceDashboard } from '@/components/workspace-dashboard';
+export default function DashboardPage() { return <WorkspaceDashboard />; }

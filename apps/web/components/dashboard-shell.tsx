@@ -1,11 +1,64 @@
 'use client';
-import Link from 'next/link';
-import { useState } from 'react';
-import { Activity, Bell, ChevronDown, GitBranch, LayoutDashboard, Menu, Network, Search, Settings, X } from 'lucide-react';
 
-const nav = [['/dashboard', 'Overview', LayoutDashboard], ['/dashboard/apis', 'APIs', GitBranch], ['/dashboard/dependencies', 'Dependencies', Network], ['/dashboard/activity', 'Activity', Activity], ['/dashboard/settings', 'Settings', Settings]] as const;
-export function DashboardShell({ children, title }: { children: React.ReactNode; title: string }) { const [open, setOpen] = useState(false); return <div className="app-shell"><aside className={`app-sidebar ${open ? 'sidebar-open' : ''}`}><div className="app-brand"><Link href="/" className="brand"><span className="brand-mark"><GitBranch size={15} /></span><span>version<span>flow</span></span></Link><button className="icon-button mobile-close" onClick={() => setOpen(false)} aria-label="Close sidebar"><X size={19} /></button></div><div className="workspace-switch"><span className="workspace-avatar">A</span><span><b>Acme Engineering</b><small>Workspace</small></span><ChevronDown size={14} /></div><nav className="app-nav">{nav.map(([href, label, Icon]) => <Link key={href} href={href} className={href === '/dashboard' ? (title === 'Overview' ? 'active' : '') : title === label ? 'active' : ''} onClick={() => setOpen(false)}><Icon size={17} /><span>{label}</span>{label === 'Activity' && <em>4</em>}</Link>)}</nav><div className="sidebar-foot"><div className="status-line"><span />All systems operational</div><div className="sidebar-user"><span className="avatar">JD</span><span><b>Jordan Davis</b><small>Admin</small></span><ChevronDown size={13} /></div></div></aside><div className="app-main"><header className="app-topbar"><button className="icon-button mobile-menu" onClick={() => setOpen(true)} aria-label="Open sidebar"><Menu size={21} /></button><div><span className="top-kicker">Workspace / <b>Acme Engineering</b></span><h1>{title}</h1></div><div className="top-actions"><label className="app-search"><Search size={15} /><input aria-label="Search workspace" placeholder="Search workspace" /></label><button className="icon-button notification" aria-label="Notifications"><Bell size={18} /><i /></button><span className="top-avatar">JD</span></div></header><main className="app-content">{children}</main></div>{open && <button className="sidebar-overlay" onClick={() => setOpen(false)} aria-label="Close navigation overlay" />}</div> }
+import { FormEvent, useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Bell, ChevronDown, Search } from 'lucide-react';
+import { apiClient, type AuthUser, type OrganizationListItem } from '@/lib/api-client';
 
-const metricData = [['Total APIs', '24', '+3 this month', 'orange'], ['API versions', '67', '+12 this month', 'blue'], ['Registered dependencies', '142', '+8 this month', 'green'], ['Recent changes', '09', '3 need attention', 'red']];
-const changes = [['Orders API', 'v0.4.3', 'Breaking change', '2h ago', 'red'], ['Identity API', 'v2.1.0', 'Minor update', '5h ago', 'amber'], ['Billing API', 'v1.8.2', 'Compatible', 'Yesterday', 'green'], ['Partner API', 'v3.0.0', 'Major release', 'Yesterday', 'red']];
-export function OverviewContent() { return <><div className="welcome-row"><div><p className="page-kicker">Monday, March 16, 2026</p><h2>Good morning, Jordan.</h2><p className="page-subtitle">Here’s the latest signal from your API ecosystem.</p></div><Link href="/dashboard/apis" className="app-button"><GitBranch size={15} /> Register an API</Link></div><div className="metric-grid">{metricData.map(([label, value, change, color]) => <div className="metric-card" key={label}><div className={`metric-icon ${color}`}><Activity size={16} /></div><span>{label}</span><b>{value}</b><em className={color === 'red' ? 'attention' : ''}>{change}</em></div>)}</div><div className="dashboard-grid"><section className="dash-panel changes-panel"><div className="panel-heading"><div><h3>API activity</h3><p>Latest changes across your registry</p></div><Link href="/dashboard/activity">View all <span>→</span></Link></div><div className="table-wrap"><table><thead><tr><th>API</th><th>Version</th><th>Change type</th><th>Updated</th><th /></tr></thead><tbody>{changes.map(([api, version, type, time, color]) => <tr key={api}><td><span className={`table-dot ${color}`} />{api}</td><td className="mono-text">{version}</td><td><span className={`change-pill ${color}`}>{type}</span></td><td className="muted-cell">{time}</td><td><button className="row-more" aria-label={`Open ${api}`}>•••</button></td></tr>)}</tbody></table></div></section><section className="dash-panel recent-panel"><div className="panel-heading"><div><h3>Recent activity</h3><p>What’s moving in the workspace</p></div><Link href="/dashboard/activity">View all <span>→</span></Link></div><div className="timeline"><div><span className="timeline-icon orange"><GitBranch size={14} /></span><p><b>Orders API</b> was updated to v0.4.3<small>Jordan Davis · 2 hours ago</small></p></div><div><span className="timeline-icon blue"><Network size={14} /></span><p><b>Checkout Service</b> linked to Orders API<small>System · 5 hours ago</small></p></div><div><span className="timeline-icon green"><Activity size={14} /></span><p><b>Billing API</b> passed compatibility check<small>System · Yesterday</small></p></div></div></section></div><div className="dashboard-grid lower-grid"><section className="dash-panel dependency-panel"><div className="panel-heading"><div><h3>Dependency signal</h3><p>Registered connections by API</p></div><Link href="/dashboard/dependencies">Explore <span>→</span></Link></div><div className="dependency-map"><div className="map-lines"><i /><i /><i /><i /></div><span className="map-node central">Orders<br /><small>API</small></span><span className="map-node n1">Checkout</span><span className="map-node n2">Fulfillment</span><span className="map-node n3">Partner</span><span className="map-node n4">Billing</span></div></section><section className="dash-panel quick-panel"><div className="panel-heading"><div><h3>Quick actions</h3><p>Keep your registry current</p></div></div><Link href="/dashboard/apis" className="quick-action"><span className="quick-icon orange"><GitBranch size={16} /></span><span><b>Register an API</b><small>Add an XML specification</small></span><span>→</span></Link><Link href="/dashboard/dependencies" className="quick-action"><span className="quick-icon blue"><Network size={16} /></span><span><b>Review dependencies</b><small>See ecosystem connections</small></span><span>→</span></Link></section></div></> }
+export function DashboardShell({ children }: { children: React.ReactNode }) {
+  const [orgOpen, setOrgOpen] = useState(false);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
+  const [organizationName, setOrganizationName] = useState('Select organization');
+  const [newOrgName, setNewOrgName] = useState('');
+  const [orgError, setOrgError] = useState('');
+  const pathname = usePathname();
+  const router = useRouter();
+  const inProject = pathname.includes('/projects/');
+  const current = inProject ? 'Project workspace' : 'Projects';
+  const initials = user?.name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'VF';
+
+  useEffect(() => {
+    const handleOrganizationChange = (event: Event) => setOrganizationName((event as CustomEvent<string>).detail);
+    window.addEventListener('versionflow:organization-changed', handleOrganizationChange);
+    void Promise.all([apiClient.auth.me(), apiClient.organizations.list()]).then(([me, list]) => {
+      if (!me.success || !me.data) { router.replace('/auth/login'); return; }
+      setUser(me.data);
+      if (!list.success || !list.data) return;
+      setOrganizations(list.data);
+      const stored = window.localStorage.getItem('versionflow_organization_id');
+      const selected = list.data.find((item) => item.organization.id === stored) || list.data[0];
+      if (selected) setOrganizationName(selected.organization.name);
+    });
+    return () => window.removeEventListener('versionflow:organization-changed', handleOrganizationChange);
+  }, [router, pathname]);
+
+  function selectOrganization(item: OrganizationListItem) {
+    window.localStorage.setItem('versionflow_organization_id', item.organization.id);
+    setOrganizationName(item.organization.name);
+    setOrgOpen(false);
+    window.dispatchEvent(new CustomEvent('versionflow:organization-changed', { detail: item.organization.name }));
+    if (inProject) router.push('/dashboard');
+  }
+
+  async function createOrganization(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!newOrgName.trim()) return;
+    setOrgError('');
+    const result = await apiClient.organizations.create({ name: newOrgName.trim() });
+    if (!result.success || !result.data) { setOrgError(result.error?.message || 'Could not create organization.'); return; }
+    setNewOrgName('');
+    const item: OrganizationListItem = { organization: result.data, role: 'owner' };
+    setOrganizations((currentList) => [...currentList, item]);
+    selectOrganization(item);
+    router.push('/dashboard');
+  }
+
+  return <div className="app-shell"><div className="app-main">
+    <header className="app-topbar"><div className="topbar-context"><div className="org-selector-wrap">
+      <button className="org-selector" onClick={() => setOrgOpen((value) => !value)} aria-expanded={orgOpen} aria-haspopup="menu"><span className="workspace-avatar">{organizationName[0]?.toUpperCase() || 'O'}</span><span><small>Organization</small><b>{organizationName}</b></span><ChevronDown size={14}/></button>
+      {orgOpen && <div className="org-menu" role="menu"><p>Switch organization</p>{organizations.map((item) => <button type="button" role="menuitem" key={item.organization.id} className={item.organization.name === organizationName ? 'selected' : ''} onClick={() => selectOrganization(item)}><span><b>{item.organization.name}</b><small>{item.organization.type} · {item.role}</small></span><span>{item.organization.name === organizationName ? 'Current' : 'Open'}</span></button>)}<form onSubmit={createOrganization} className="org-create" noValidate><input aria-label="New organization name" value={newOrgName} onChange={(event) => setNewOrgName(event.target.value)} placeholder="New organization"/><button disabled={!newOrgName.trim()} type="submit"><span>+</span> Create organization</button>{orgError && <small className="org-error">{orgError}</small>}</form></div>}
+    </div><div><span className="top-kicker">VersionFlow / <b>{current}</b></span><h1>{current}</h1></div></div><div className="top-actions"><label className="app-search"><Search size={15}/><input aria-label="Search workspace" placeholder="Search workspace"/></label><button className="icon-button notification" aria-label="Notifications"><Bell size={18}/></button><span className="top-avatar">{initials}</span></div></header>
+    <main className={`app-content ${inProject ? 'project-app-content' : ''}`}>{children}</main>
+  </div></div>;
+}

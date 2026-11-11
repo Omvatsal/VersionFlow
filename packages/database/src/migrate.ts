@@ -2,21 +2,26 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
+import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 
-dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const envCandidates = [
+  path.resolve(process.cwd(), '.env'),
+  path.resolve(process.cwd(), '../../.env'),
+];
+const envPath = envCandidates.find((candidate) => fs.existsSync(candidate));
+dotenv.config({ path: envPath });
 
 export async function runMigrations(databaseUrl?: string) {
   const url =
     databaseUrl ||
     process.env['DATABASE_URL'] ||
-    'postgres://postgres:postgres@localhost:5432/versionflow_dev';
+    'postgres://postgres:postgres@127.0.0.1:5432/versionflow_dev';
   console.log('[Database] Connecting for migration...');
-  const migrationClient = postgres(url, { max: 1 });
+  const migrationClient = postgres(url, {
+    max: 1,
+    ssl: url.includes('supabase.co') || url.includes('pooler.supabase.com') ? 'require' : undefined,
+  });
   const db = drizzle(migrationClient);
 
   const migrationsFolder = path.resolve(__dirname, '../drizzle');
@@ -28,7 +33,7 @@ export async function runMigrations(databaseUrl?: string) {
   await migrationClient.end();
 }
 
-if (process.argv[1] === __filename) {
+if (require.main === module) {
   runMigrations().catch((err) => {
     console.error('[Database] Migration failed:', err);
     process.exit(1);

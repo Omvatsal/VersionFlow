@@ -1,0 +1,2 @@
+'use client';
+export function BarChart({ items }: { items: Array<{ label: string; value: number }> }) { const max = Math.max(...items.map((item) => item.value), 1); return <div className="chart-bars" aria-label="Bar chart">{items.map((item) => <div className="chart-bar-row" key={item.label}><span>{item.label}</span><div><i style={{ width: `${(item.value / max) * 100}%` }} /></div><b>{item.value}</b></div>)}</div>; }

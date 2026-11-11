@@ -10,11 +10,12 @@ export function getDatabaseConnection(connectionString?: string) {
     const url =
       connectionString ||
       process.env['DATABASE_URL'] ||
-      'postgres://postgres:postgres@localhost:5432/versionflow_dev';
+      'postgres://postgres:postgres@127.0.0.1:5432/versionflow_dev';
     sqlClient = postgres(url, {
       max: 10,
       idle_timeout: 20,
       connect_timeout: 10,
+      ssl: url.includes('supabase.co') || url.includes('pooler.supabase.com') ? 'require' : undefined,
     });
     drizzleDb = drizzle(sqlClient, { schema });
   }

@@ -1,0 +1,273 @@
+/* [project]/apps/web/app/project-admin.css [app-client] (css) */
+.project-admin-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 36px 80px;
+}
+
+.page-heading {
+  border-bottom: 1px solid var(--line);
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 18px;
+  padding-bottom: 24px;
+  display: flex;
+}
+
+.page-heading h1, .admin-card h2 {
+  font-family: var(--display);
+  letter-spacing: -.04em;
+  margin: 4px 0;
+  font-weight: 500;
+}
+
+.page-heading p:not(.page-kicker), .muted-copy {
+  color: var(--muted);
+  margin: 5px 0;
+  font-size: 13px;
+}
+
+.page-kicker {
+  font: 10px var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--orange);
+  margin: 0;
+}
+
+.admin-card {
+  border: 1px solid var(--line);
+  background: #111;
+  margin-top: 16px;
+  padding: 22px;
+}
+
+.admin-card-heading {
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  display: flex;
+}
+
+.settings-form {
+  gap: 16px;
+  display: grid;
+}
+
+.settings-form label {
+  color: var(--soft);
+  gap: 7px;
+  font-size: 12px;
+  display: grid;
+}
+
+.settings-form input, .settings-form textarea, .admin-card select, .compact-input {
+  color: var(--white);
+  background: #0b0b0b;
+  border: 1px solid #3a3a3a;
+  border-radius: 4px;
+  outline: none;
+  padding: 10px 12px;
+}
+
+.settings-form input:focus, .settings-form textarea:focus, .admin-card select:focus {
+  border-color: var(--orange);
+}
+
+.settings-form small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.inline-feedback {
+  color: #f4b089;
+  background: #25170f;
+  border: 1px solid #6d482b;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+
+.settings-facts {
+  background: var(--line);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  margin-top: 18px;
+  display: grid;
+}
+
+.settings-facts div {
+  background: #111;
+  padding: 14px;
+}
+
+.settings-facts small, .settings-facts b {
+  display: block;
+}
+
+.settings-facts small {
+  color: var(--muted);
+  font: 10px var(--mono);
+  text-transform: uppercase;
+}
+
+.settings-facts b {
+  margin-top: 7px;
+  font-size: 13px;
+}
+
+.danger-card {
+  border-color: #593329;
+}
+
+.members-layout {
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, .75fr);
+  gap: 16px;
+  display: grid;
+}
+
+.member-list {
+  border-top: 1px solid var(--line);
+}
+
+.member-row {
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  width: 100%;
+  color: var(--white);
+  background: none;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  display: flex;
+}
+
+.member-row:hover, .member-row.selected {
+  background: #171311;
+}
+
+.member-info {
+  flex: 1;
+  display: grid;
+}
+
+.member-info small {
+  color: var(--muted);
+}
+
+.member-avatar {
+  width: 30px;
+  height: 30px;
+  color: var(--orange);
+  border: 1px solid #4a4a4a;
+  border-radius: 50%;
+  flex: none;
+  place-items: center;
+  display: grid;
+}
+
+.member-avatar.large {
+  width: 44px;
+  height: 44px;
+}
+
+.role-badge {
+  color: #e9a070;
+  font: 10px var(--mono);
+  text-transform: uppercase;
+  border: 1px solid #4a3b31;
+  border-radius: 999px;
+  padding: 3px 8px;
+}
+
+.member-row select {
+  width: 95px;
+}
+
+.member-detail {
+  position: relative;
+}
+
+.member-detail > p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.close-detail {
+  color: var(--muted);
+  background: none;
+  border: 0;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.member-detail dl {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 18px 0;
+  padding: 14px 0;
+  display: grid;
+}
+
+.member-detail dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.member-detail dd {
+  text-align: right;
+  margin: 0;
+  font-size: 12px;
+}
+
+.button-danger {
+  color: #ffad91;
+  background: #2a1511;
+  border: 1px solid #6a3429;
+}
+
+.full-button {
+  justify-content: center;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.admin-card select {
+  width: 100%;
+  margin-top: 8px;
+}
+
+@media (max-width: 800px) {
+  .project-admin-page {
+    padding: 22px 16px 50px;
+  }
+
+  .page-heading {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .members-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-facts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-card-heading {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .compact-input {
+    width: 100%;
+  }
+}
+
+/*# sourceMappingURL=apps_web_app_project-admin_css_bad6b30c._.single.css.map*/
