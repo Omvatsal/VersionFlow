@@ -6,6 +6,10 @@ The schema now includes users and persisted sessions, organizations and membersh
 
 `oauth_accounts` stores only the provider (`google`), Google subject identifier, verified provider email, owning VersionFlow user, and timestamps. Google access and refresh tokens are not stored. `(provider, provider_account_id)` is unique, and one Google identity cannot map to multiple users.
 
+The same `oauth_accounts` table now supports `github` identities. GitHub account ID, verified email, username, profile URL, and avatar URL are stored; GitHub OAuth access tokens are not stored. Migration `0007_keen_orphan.sql` adds the provider enum value and nullable profile metadata columns.
+
+GitHub App integration uses `github_installations`, `github_repositories`, and `project_github_repositories` from migration `0008_rich_strong_guy.sql`. Installation access tokens are generated temporarily from the App private key and are not persisted. A project connection is unique per `(project_id, repository_id)` and is only created after project-admin authorization.
+
 Run migrations with `pnpm --filter @versionflow/database db:migrate`; generate migrations with `pnpm --filter @versionflow/database db:generate`.
 
 Milestone migration: `packages/database/drizzle/0002_spotty_sentry.sql`.

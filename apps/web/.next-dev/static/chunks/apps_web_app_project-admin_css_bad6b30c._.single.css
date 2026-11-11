@@ -270,4 +270,55 @@
   }
 }
 
+.github-actions, .github-repo-actions {
+  align-items: center;
+  gap: 10px;
+  display: flex;
+}
+
+.github-repo-list {
+  border-top: 1px solid var(--line);
+}
+
+.github-repo-row {
+  border-bottom: 1px solid var(--line);
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 15px 0;
+  display: flex;
+}
+
+.github-repo-row > b, .github-repo-row small {
+  display: block;
+}
+
+.github-repo-row small {
+  color: var(--muted);
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.github-repo-actions a {
+  color: var(--muted);
+  place-items: center;
+  display: grid;
+}
+
+.github-repo-actions a:hover {
+  color: var(--orange);
+}
+
+@media (max-width: 800px) {
+  .github-actions, .github-repo-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .github-repo-actions {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
 /*# sourceMappingURL=apps_web_app_project-admin_css_bad6b30c._.single.css.map*/

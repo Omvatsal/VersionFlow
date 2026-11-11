@@ -127,6 +127,10 @@ class ApiClient {
                 }),
             removeMember: (id, userId)=>this.request("/projects/".concat(id, "/members/").concat(userId), {
                     method: 'DELETE'
+                }),
+            githubRepositories: (id)=>this.request("/integrations/github/repositories/".concat(id)),
+            connectGithubRepository: (projectId, repositoryId, installationId)=>this.request("/integrations/github/repositories/".concat(projectId, "/").concat(repositoryId, "/").concat(installationId), {
+                    method: 'POST'
                 })
         });
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f40$swc$2b$helpers$40$0$2e$5$2e$15$2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_define_property$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(this, "registry", {
@@ -257,6 +261,27 @@ function GoogleIcon() {
     }, this);
 }
 _c = GoogleIcon;
+function GitHubIcon() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+        "aria-hidden": "true",
+        viewBox: "0 0 24 24",
+        width: "18",
+        height: "18",
+        fill: "currentColor",
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+            d: "M12 .7a11.3 11.3 0 0 0-3.57 22.02c.57.1.78-.25.78-.55v-2.12c-3.17.69-3.84-1.34-3.84-1.34-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.25 3.33.96.1-.74.4-1.25.73-1.54-2.53-.29-5.2-1.27-5.2-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.45.11-3.02 0 0 .96-.31 3.13 1.17A10.9 10.9 0 0 1 12 5.99c.97 0 1.94.13 2.85.39 2.17-1.48 3.13-1.17 3.13-1.17.62 1.57.23 2.73.11 3.02.73.8 1.18 1.82 1.18 3.07 0 4.4-2.68 5.36-5.22 5.65.41.35.78 1.04.78 2.1v3.11c0 .3.21.66.79.55A11.3 11.3 0 0 0 12 .7Z"
+        }, void 0, false, {
+            fileName: "[project]/apps/web/components/auth-form.tsx",
+            lineNumber: 10,
+            columnNumber: 119
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/apps/web/components/auth-form.tsx",
+        lineNumber: 10,
+        columnNumber: 32
+    }, this);
+}
+_c1 = GitHubIcon;
 function AuthForm(param) {
     let { mode } = param;
     _s();
@@ -316,6 +341,7 @@ function AuthForm(param) {
         }
     }
     const googleUrl = "".concat(("TURBOPACK compile-time value", "http://localhost:4000/api/v1") || 'http://localhost:4000/api/v1', "/auth/google");
+    const githubUrl = "".concat(("TURBOPACK compile-time value", "http://localhost:4000/api/v1") || 'http://localhost:4000/api/v1', "/auth/github");
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
         className: "auth-page",
         children: [
@@ -332,12 +358,12 @@ function AuthForm(param) {
                                     size: 16
                                 }, void 0, false, {
                                     fileName: "[project]/apps/web/components/auth-form.tsx",
-                                    lineNumber: 17,
+                                    lineNumber: 19,
                                     columnNumber: 132
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
+                                lineNumber: 19,
                                 columnNumber: 103
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -347,19 +373,19 @@ function AuthForm(param) {
                                         children: "flow"
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                                        lineNumber: 17,
+                                        lineNumber: 19,
                                         columnNumber: 175
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
+                                lineNumber: 19,
                                 columnNumber: 162
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                        lineNumber: 17,
+                        lineNumber: 19,
                         columnNumber: 65
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -370,49 +396,80 @@ function AuthForm(param) {
                                 children: "Change APIs with confidence"
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
+                                lineNumber: 19,
                                 columnNumber: 236
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                 children: isRegister ? 'Create your workspace.' : 'Welcome back.'
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
+                                lineNumber: 19,
                                 columnNumber: 297
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: isRegister ? "Start with a personal workspace. Invite your team when you're ready." : 'Sign in to open your API ecosystem workspace.'
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
+                                lineNumber: 19,
                                 columnNumber: 363
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                        lineNumber: 17,
+                        lineNumber: 19,
                         columnNumber: 206
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                        className: "google-button",
-                        href: googleUrl,
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "auth-provider-buttons",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(GoogleIcon, {}, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                className: "google-button",
+                                href: googleUrl,
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(GoogleIcon, {}, void 0, false, {
+                                        fileName: "[project]/apps/web/components/auth-form.tsx",
+                                        lineNumber: 19,
+                                        columnNumber: 596
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        children: "Continue with Google"
+                                    }, void 0, false, {
+                                        fileName: "[project]/apps/web/components/auth-form.tsx",
+                                        lineNumber: 19,
+                                        columnNumber: 610
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
-                                columnNumber: 557
+                                lineNumber: 19,
+                                columnNumber: 550
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                children: "Continue with Google"
-                            }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                className: "google-button github-button",
+                                href: githubUrl,
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(GitHubIcon, {}, void 0, false, {
+                                        fileName: "[project]/apps/web/components/auth-form.tsx",
+                                        lineNumber: 19,
+                                        columnNumber: 707
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        children: "Continue with GitHub"
+                                    }, void 0, false, {
+                                        fileName: "[project]/apps/web/components/auth-form.tsx",
+                                        lineNumber: 19,
+                                        columnNumber: 721
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
-                                columnNumber: 571
+                                lineNumber: 19,
+                                columnNumber: 647
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                        lineNumber: 17,
+                        lineNumber: 19,
                         columnNumber: 511
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -421,13 +478,13 @@ function AuthForm(param) {
                             children: "or use email"
                         }, void 0, false, {
                             fileName: "[project]/apps/web/components/auth-form.tsx",
-                            lineNumber: 17,
-                            columnNumber: 638
+                            lineNumber: 19,
+                            columnNumber: 794
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                        lineNumber: 17,
-                        columnNumber: 608
+                        lineNumber: 19,
+                        columnNumber: 764
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
                         onSubmit: submit,
@@ -442,14 +499,14 @@ function AuthForm(param) {
                                         required: true
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                                        lineNumber: 17,
-                                        columnNumber: 719
+                                        lineNumber: 19,
+                                        columnNumber: 875
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
-                                columnNumber: 708
+                                lineNumber: 19,
+                                columnNumber: 864
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                 children: [
@@ -462,14 +519,14 @@ function AuthForm(param) {
                                         required: true
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                                        lineNumber: 17,
-                                        columnNumber: 845
+                                        lineNumber: 19,
+                                        columnNumber: 1001
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
-                                columnNumber: 833
+                                lineNumber: 19,
+                                columnNumber: 989
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                 children: [
@@ -483,14 +540,14 @@ function AuthForm(param) {
                                         required: true
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                                        lineNumber: 17,
-                                        columnNumber: 994
+                                        lineNumber: 19,
+                                        columnNumber: 1150
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
-                                columnNumber: 979
+                                lineNumber: 19,
+                                columnNumber: 1135
                             }, this),
                             error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "auth-error",
@@ -498,8 +555,8 @@ function AuthForm(param) {
                                 children: error
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
-                                columnNumber: 1219
+                                lineNumber: 19,
+                                columnNumber: 1375
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 className: "button button-primary auth-submit",
@@ -511,20 +568,20 @@ function AuthForm(param) {
                                         size: 16
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                                        lineNumber: 17,
-                                        columnNumber: 1406
+                                        lineNumber: 19,
+                                        columnNumber: 1562
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
-                                columnNumber: 1270
+                                lineNumber: 19,
+                                columnNumber: 1426
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                        lineNumber: 17,
-                        columnNumber: 669
+                        lineNumber: 19,
+                        columnNumber: 825
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         className: "auth-switch",
@@ -536,19 +593,19 @@ function AuthForm(param) {
                                 children: isRegister ? 'Sign in' : 'Create an account'
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                                lineNumber: 17,
-                                columnNumber: 1539
+                                lineNumber: 19,
+                                columnNumber: 1695
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                        lineNumber: 17,
-                        columnNumber: 1446
+                        lineNumber: 19,
+                        columnNumber: 1602
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                lineNumber: 17,
+                lineNumber: 19,
                 columnNumber: 38
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -559,20 +616,20 @@ function AuthForm(param) {
                         size: 14
                     }, void 0, false, {
                         fileName: "[project]/apps/web/components/auth-form.tsx",
-                        lineNumber: 17,
-                        columnNumber: 1698
+                        lineNumber: 19,
+                        columnNumber: 1854
                     }, this),
                     " Back to VersionFlow"
                 ]
             }, void 0, true, {
                 fileName: "[project]/apps/web/components/auth-form.tsx",
-                lineNumber: 17,
-                columnNumber: 1661
+                lineNumber: 19,
+                columnNumber: 1817
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/apps/web/components/auth-form.tsx",
-        lineNumber: 17,
+        lineNumber: 19,
         columnNumber: 10
     }, this);
 }
@@ -581,10 +638,11 @@ _s(AuthForm, "IFh56s1ODoZMuWy9eWrCLqOA7pU=", false, function() {
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$15$2e$5$2e$29_$40$types$2b$node$40$22$2e$20$2e$5_react$2d$dom$40$19$2e$3$2e$1_react$40$19$2e$3$2e$1_$5f$react$40$19$2e$3$2e$1$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];
 });
-_c1 = AuthForm;
-var _c, _c1;
+_c2 = AuthForm;
+var _c, _c1, _c2;
 __turbopack_context__.k.register(_c, "GoogleIcon");
-__turbopack_context__.k.register(_c1, "AuthForm");
+__turbopack_context__.k.register(_c1, "GitHubIcon");
+__turbopack_context__.k.register(_c2, "AuthForm");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }

@@ -127,6 +127,10 @@ class ApiClient {
                 }),
             removeMember: (id, userId)=>this.request("/projects/".concat(id, "/members/").concat(userId), {
                     method: 'DELETE'
+                }),
+            githubRepositories: (id)=>this.request("/integrations/github/repositories/".concat(id)),
+            connectGithubRepository: (projectId, repositoryId, installationId)=>this.request("/integrations/github/repositories/".concat(projectId, "/").concat(repositoryId, "/").concat(installationId), {
+                    method: 'POST'
                 })
         });
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f40$swc$2b$helpers$40$0$2e$5$2e$15$2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_define_property$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(this, "registry", {

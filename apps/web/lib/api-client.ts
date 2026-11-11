@@ -7,6 +7,7 @@ export type OrganizationListItem = { organization: Organization; role: 'owner' |
 export type Project = { id: string; organizationId: string; name: string; slug: string; description?: string | null; createdAt: string; updatedAt: string; apiCount?: number; versionCount?: number; dependencyCount?: number };
 export type ProjectMember = { collaborator: { id: string; projectId: string; userId: string; role: 'admin' | 'editor' | 'viewer'; createdAt: string; updatedAt: string }; user: AuthUser };
 export type ProjectSettings = { project: Project; organization: { id: string; name: string }; currentUserRole: 'admin' | 'editor' | 'viewer'; canManage: boolean };
+export type GithubIntegrationRepository = { repository: { id: string; githubRepositoryId: number; fullName: string; ownerLogin: string; repositoryUrl: string; defaultBranch: string; isPrivate: boolean; isArchived: boolean; lastSynchronizedAt?: string | null }; installation: { id: string; githubInstallationId: number; githubAccountLogin: string; accountType: string; state: string }; connected: boolean };
 export type OrganizationDetails = { organization: Organization; members: Array<{ membership: { role: string }; user: AuthUser }>; projects: Project[] };
 export type ApiRecord = { id: string; projectId: string; name: string; slug: string; description?: string | null; lifecycle: 'draft' | 'active' | 'deprecated' | 'sunset'; createdAt: string; updatedAt: string };
 export type ApiVersion = { id: string; apiId: string; version: string; status: 'draft' | 'published' | 'deprecated' | 'sunset'; specificationFormat: string; sourceSpecificationVersion?: string | null; publishedAt?: string | null; deprecatedAt?: string | null; sunsetAt?: string | null; createdAt: string; updatedAt: string };
@@ -116,6 +117,8 @@ export class ApiClient {
     addMember: (id: string, input: { userId: string; role: ProjectMember['collaborator']['role'] }) => this.request<ProjectMember['collaborator']>(`/projects/${id}/collaborators`, { method: 'POST', body: JSON.stringify(input) }),
     updateMember: (id: string, userId: string, role: ProjectMember['collaborator']['role']) => this.request<ProjectMember['collaborator']>(`/projects/${id}/members/${userId}`, { method: 'PATCH', body: JSON.stringify({ role }) }),
     removeMember: (id: string, userId: string) => this.request<{ deleted: boolean }>(`/projects/${id}/members/${userId}`, { method: 'DELETE' }),
+    githubRepositories: (id: string) => this.request<{ repositories: GithubIntegrationRepository[] }>(`/integrations/github/repositories/${id}`),
+    connectGithubRepository: (projectId: string, repositoryId: string, installationId: string) => this.request(`/integrations/github/repositories/${projectId}/${repositoryId}/${installationId}`, { method: 'POST' }),
   };
 
   readonly registry = {

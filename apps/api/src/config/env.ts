@@ -21,6 +21,14 @@ export const ApiEnvSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CALLBACK_URL: z.string().url().default('http://localhost:4000/api/v1/auth/google/callback'),
   FRONTEND_URL: z.string().url().default('http://localhost:3000'),
+  GITHUB_OAUTH_CLIENT_ID: z.string().optional(),
+  GITHUB_OAUTH_CLIENT_SECRET: z.string().optional(),
+  GITHUB_OAUTH_CALLBACK_URL: z.string().url().default('http://localhost:4000/api/v1/auth/github/callback'),
+  GITHUB_APP_ID: z.string().optional(),
+  GITHUB_APP_PRIVATE_KEY: z.string().optional(),
+  GITHUB_APP_SLUG: z.string().optional(),
+  GITHUB_APP_CALLBACK_URL: z.string().url().default('http://localhost:4000/api/v1/integrations/github/callback'),
+  GITHUB_APP_WEBHOOK_SECRET: z.string().optional(),
 });
 
 export type ApiEnv = z.infer<typeof ApiEnvSchema>;

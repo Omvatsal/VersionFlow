@@ -1,12 +1,12 @@
 {
   "pages": {
     "/auth/login/page": [
-      "static/chunks/apps_web_app_257932cd._.css",
+      "static/chunks/apps_web_app_ccb86450._.css",
       "static/chunks/9f795_next_dist_2359ed5c._.js",
       "static/chunks/apps_web_app_layout_tsx_b11a23ca._.js",
-      "static/chunks/9f795_next_dist_client_components_builtin_global-error_03458054.js",
+      "static/chunks/9f795_next_dist_client_components_builtin_global-error_2b5d2683.js",
       "static/chunks/_d252cd36._.js",
-      "static/chunks/apps_web_app_auth_login_page_tsx_03458054._.js",
+      "static/chunks/apps_web_app_auth_login_page_tsx_2b5d2683._.js",
       "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_cdbdbe26._.js",
       "static/chunks/9f795_next_dist_compiled_react-dom_4bfe7577._.js",
       "static/chunks/9f795_next_dist_compiled_next-devtools_index_12b9bbaa.js",
@@ -18,12 +18,12 @@
       "static/chunks/turbopack-apps_web_cf6aab93._.js"
     ],
     "/auth/register/page": [
-      "static/chunks/apps_web_app_257932cd._.css",
+      "static/chunks/apps_web_app_ccb86450._.css",
       "static/chunks/9f795_next_dist_2359ed5c._.js",
       "static/chunks/apps_web_app_layout_tsx_b11a23ca._.js",
-      "static/chunks/9f795_next_dist_client_components_builtin_global-error_03458054.js",
+      "static/chunks/9f795_next_dist_client_components_builtin_global-error_2b5d2683.js",
       "static/chunks/_d252cd36._.js",
-      "static/chunks/apps_web_app_auth_register_page_tsx_03458054._.js",
+      "static/chunks/apps_web_app_auth_register_page_tsx_2b5d2683._.js",
       "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_cdbdbe26._.js",
       "static/chunks/9f795_next_dist_compiled_react-dom_4bfe7577._.js",
       "static/chunks/9f795_next_dist_compiled_next-devtools_index_12b9bbaa.js",

@@ -9,6 +9,29 @@
 - `apps/api/src/config/env.ts`: centralized Google OAuth and frontend URL validation with root-workspace `.env` discovery.
 - `apps/api/package.json`: pins `google-auth-library` and its type package.
 
+## GitHub OAuth foundation
+
+- `apps/api/src/auth/auth.service.ts`: GitHub OAuth authorization URL, authorization-code exchange, verified-email lookup, provider identity lookup, transactional first-time account and personal organization creation, and existing VersionFlow token issuance.
+- `apps/api/src/auth/auth.controller.ts`: GitHub OAuth initiation/callback, short-lived state cookie validation, secure VersionFlow auth cookies, and safe frontend error redirects.
+- `apps/api/src/config/env.ts`: GitHub OAuth client and callback environment validation.
+- `packages/database/src/schema/identity.ts`: GitHub provider enum and optional username/profile/avatar metadata on external identities.
+- `packages/database/drizzle/0007_keen_orphan.sql`: migration for GitHub OAuth provider support.
+- `apps/web/components/auth-form.tsx`: Continue with GitHub button on both sign-in and sign-up pages.
+
+GitHub App repository integration, installations, repository scanning, webhooks, and pull-request analysis are not implemented yet; no fake repository state is shown.
+
+## GitHub App repository integration foundation
+
+- `packages/database/src/schema/github.ts`: GitHub installations, repositories, and project repository connections with uniqueness and project scoping.
+- `packages/database/drizzle/0008_rich_strong_guy.sql`: migration for GitHub App integration records.
+- `apps/api/src/github/github.service.ts`: GitHub App installation URL, RS256 installation authentication, installation metadata persistence, accessible repository synchronization, and project connection authorization.
+- `apps/api/src/github/github.controller.ts`: installation redirect/callback, project-scoped repository listing, and admin-only repository connection routes.
+- `apps/api/src/github/github.module.ts`: GitHub integration module registration.
+- `apps/web/components/github-integration.tsx`: real repository listing, search, connect action, installation action, and honest unavailable-pipeline messaging.
+- `apps/web/app/dashboard/projects/[projectId]/[...section]/page.tsx`: GitHub integrations route.
+
+For local GitHub App configuration, use callback URL `http://localhost:4000/api/v1/integrations/github/callback` and setup URL `http://localhost:3000/dashboard`. The setup URL is the post-install landing page; repository selection is then available from the project Integrations route.
+
 ## Frontend integration
 
 - `apps/web/components/auth-form.tsx`: Continue with Google action on login and registration screens.

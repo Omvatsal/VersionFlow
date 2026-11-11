@@ -50,6 +50,20 @@
       "when": 1794335719256,
       "tag": "0006_futuristic_thunderball",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794405387308,
+      "tag": "0007_keen_orphan",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794406091546,
+      "tag": "0008_rich_strong_guy",
+      "breakpoints": true
     }
   ]
 }

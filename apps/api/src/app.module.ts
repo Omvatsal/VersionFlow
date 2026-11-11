@@ -4,13 +4,14 @@ import { AuthModule } from './auth/auth.module.js';
 import { AccessModule } from './access/access.module.js';
 import { OrganizationsModule } from './organizations/organizations.module.js';
 import { ProjectsModule } from './projects/projects.module.js';
+import { GithubModule } from './github/github.module.js';
 import { RegistryModule } from './registry/registry.module.js';
 import { DependenciesModule } from './dependencies/dependencies.module.js';
 import { AnalyticsModule } from './analytics/analytics.module.js';
 import { ChangesModule } from './changes/changes.module.js';
 
 @Module({
-  imports: [HealthModule, AuthModule, AccessModule, OrganizationsModule, ProjectsModule, RegistryModule, DependenciesModule, AnalyticsModule, ChangesModule],
+  imports: [HealthModule, AuthModule, AccessModule, OrganizationsModule, ProjectsModule, GithubModule, RegistryModule, DependenciesModule, AnalyticsModule, ChangesModule],
 })
 export class AppModule {}
 

@@ -30,6 +30,22 @@ Google OAuth routes:
 - `GET /api/v1/auth/google/callback` validates the state cookie, exchanges the one-time code, validates issuer/audience/signature/expiry and verified email, then redirects to `FRONTEND_URL/dashboard`.
 
 The callback sets HTTP-only VersionFlow access and refresh cookies. It does not expose Google tokens or authorization codes to the frontend.
+
+GitHub OAuth routes:
+
+- `GET /auth/github` starts GitHub OAuth with a short-lived state cookie.
+- `GET /auth/github/callback` validates state, exchanges the code, retrieves the GitHub profile and verified email, and creates the existing VersionFlow session.
+
+GitHub identities use the existing external identity table with provider `github`. Matching email addresses are not automatically merged with password accounts; the user must authenticate through a future account-linking flow. GitHub App repository integration is not yet exposed.
+
+GitHub App routes:
+
+- `GET /integrations/github/install` requires a VersionFlow session and redirects to the configured GitHub App installation page with a short-lived state cookie.
+- `GET /integrations/github/callback` validates the installation state, retrieves installation metadata through a short-lived App token, persists the installation, and redirects to the configured frontend URL.
+- `GET /integrations/github/repositories/:projectId` lists repositories accessible to active installations and marks existing project connections. It enforces project access.
+- `POST /integrations/github/repositories/:projectId/:repositoryId/:installationId` connects a discovered repository to a project. It requires project-admin access and prevents duplicate connections.
+
+Required App permissions for the current implementation are repository metadata read and repository contents read only when scanning is added. Repository scanning, specification registration, webhook processing, and pull-request analysis are not yet exposed.
 ### Project analytics
 
 - `GET /api/v1/projects/:projectId/analytics/overview`

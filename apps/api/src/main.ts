@@ -22,7 +22,7 @@ async function bootstrap() {
 
   app.enableShutdownHooks();
 
-  await app.listen(env.PORT);
+  await app.listen(env.PORT, '0.0.0.0');
   logger.info(`VersionFlow API listening on port ${env.PORT} (prefix: /api/v1)`);
 }
 
