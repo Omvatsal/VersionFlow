@@ -25,9 +25,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       if (!me.success || !me.data) { router.replace('/auth/login'); return; }
       setUser(me.data);
       if (!list.success || !list.data) return;
-      setOrganizations(list.data);
+      const organizationList: OrganizationListItem[] = list.data;
+      setOrganizations(organizationList);
       const stored = window.localStorage.getItem('versionflow_organization_id');
-      const selected = list.data.find((item) => item.organization.id === stored) || list.data[0];
+      const selected = organizationList.find((item: OrganizationListItem) => item.organization.id === stored) || organizationList[0];
       if (selected) setOrganizationName(selected.organization.name);
     });
     return () => window.removeEventListener('versionflow:organization-changed', handleOrganizationChange);

@@ -24,6 +24,16 @@ GitHub App repository integration, installations, repository scanning, webhooks,
 
 - `packages/database/src/schema/github.ts`: GitHub installations, repositories, and project repository connections with uniqueness and project scoping.
 - `packages/database/drizzle/0008_rich_strong_guy.sql`: migration for GitHub App integration records.
+
+## Docker support
+
+- `.dockerignore`: excludes dependencies, build artifacts, local environment files, VCS data, and logs from Docker build contexts.
+- `apps/api/Dockerfile`: multi-stage production API image with compiled workspace packages and a non-root runtime user.
+- `apps/worker/Dockerfile`: multi-stage BullMQ worker image with compiled workspace packages and a non-root runtime user.
+- `apps/web/Dockerfile`: multi-stage Next.js image using the existing `next start` output and browser-facing `NEXT_PUBLIC_API_URL` build argument.
+- `docker-compose.yml`: local web, API, worker, Redis, and profile-gated PostgreSQL services with health checks and named volumes.
+- `.env.docker.example`: local Docker defaults and optional external Supabase configuration.
+- `docs/DOCKER.md`: Docker setup, migration, Supabase mode, logs, rebuilds, and troubleshooting.
 - `apps/api/src/github/github.service.ts`: GitHub App installation URL, RS256 installation authentication, installation metadata persistence, accessible repository synchronization, and project connection authorization.
 - `apps/api/src/github/github.controller.ts`: installation redirect/callback, project-scoped repository listing, and admin-only repository connection routes.
 - `apps/api/src/github/github.module.ts`: GitHub integration module registration.

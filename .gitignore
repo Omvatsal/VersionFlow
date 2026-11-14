@@ -17,8 +17,10 @@ blob-report
 
 # Environment variables
 .env
+.env.docker
 .env*.local
 !.env.example
+
 
 # OS and IDE files
 .DS_Store

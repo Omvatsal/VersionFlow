@@ -126,6 +126,10 @@ class ApiClient {
             }),
         removeMember: (id, userId)=>this.request(`/projects/${id}/members/${userId}`, {
                 method: 'DELETE'
+            }),
+        githubRepositories: (id)=>this.request(`/integrations/github/repositories/${id}`),
+        connectGithubRepository: (projectId, repositoryId, installationId)=>this.request(`/integrations/github/repositories/${projectId}/${repositoryId}/${installationId}`, {
+                method: 'POST'
             })
     };
     registry = {

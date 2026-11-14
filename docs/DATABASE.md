@@ -10,6 +10,8 @@ The same `oauth_accounts` table now supports `github` identities. GitHub account
 
 GitHub App integration uses `github_installations`, `github_repositories`, and `project_github_repositories` from migration `0008_rich_strong_guy.sql`. Installation access tokens are generated temporarily from the App private key and are not persisted. A project connection is unique per `(project_id, repository_id)` and is only created after project-admin authorization.
 
+Docker database setup uses the existing Drizzle command `pnpm --filter @versionflow/database db:migrate`. Compose does not run migrations from application startup; run it once against the intended local PostgreSQL or explicitly configured Supabase database.
+
 Run migrations with `pnpm --filter @versionflow/database db:migrate`; generate migrations with `pnpm --filter @versionflow/database db:generate`.
 
 Milestone migration: `packages/database/drizzle/0002_spotty_sentry.sql`.
