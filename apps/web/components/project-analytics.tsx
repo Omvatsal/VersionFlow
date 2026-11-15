@@ -52,7 +52,10 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
   }, [apiRows, versionRows]);
   const relationshipCounts = useMemo(() => {
     const counts = new Map<string, number>();
-    for (const item of dependencies) counts.set(item.dependency.relationship, (counts.get(item.dependency.relationship) || 0) + 1);
+    for (const item of dependencies) {
+      const relationship = item?.dependency?.relationship;
+      if (relationship) counts.set(relationship, (counts.get(relationship) || 0) + 1);
+    }
     return [...counts.entries()].map(([label, value]) => ({ label: labelFor(label), value })).sort((a, b) => b.value - a.value);
   }, [dependencies]);
   const activityCounts = useMemo(() => {
