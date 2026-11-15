@@ -1,12 +1,14 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Bell, ChevronDown, Search } from 'lucide-react';
+import { Bell, ChevronDown, LogOut, Search } from 'lucide-react';
 import { apiClient, type AuthUser, type OrganizationListItem } from '@/lib/api-client';
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [orgOpen, setOrgOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [organizationName, setOrganizationName] = useState('Select organization');
@@ -14,9 +16,26 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [orgError, setOrgError] = useState('');
   const pathname = usePathname();
   const router = useRouter();
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   const inProject = pathname.includes('/projects/');
   const current = inProject ? 'Project workspace' : 'Projects';
   const initials = user?.name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'VF';
+
+  useEffect(() => {
+    if (!profileOpen) return;
+    function handlePointerDown(event: PointerEvent) {
+      if (!profileMenuRef.current?.contains(event.target as Node)) setProfileOpen(false);
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setProfileOpen(false);
+    }
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [profileOpen]);
 
   useEffect(() => {
     const handleOrganizationChange = (event: Event) => setOrganizationName((event as CustomEvent<string>).detail);
@@ -55,11 +74,23 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     router.push('/dashboard');
   }
 
+  async function signOut() {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await apiClient.auth.logout();
+    } finally {
+      window.localStorage.removeItem('versionflow_access_token');
+      window.localStorage.removeItem('versionflow_refresh_token');
+      router.replace('/auth/login');
+    }
+  }
+
   return <div className="app-shell"><div className="app-main">
     <header className="app-topbar"><div className="topbar-context"><div className="org-selector-wrap">
       <button className="org-selector" onClick={() => setOrgOpen((value) => !value)} aria-expanded={orgOpen} aria-haspopup="menu"><span className="workspace-avatar">{organizationName[0]?.toUpperCase() || 'O'}</span><span><small>Organization</small><b>{organizationName}</b></span><ChevronDown size={14}/></button>
       {orgOpen && <div className="org-menu" role="menu"><p>Switch organization</p>{organizations.map((item) => <button type="button" role="menuitem" key={item.organization.id} className={item.organization.name === organizationName ? 'selected' : ''} onClick={() => selectOrganization(item)}><span><b>{item.organization.name}</b><small>{item.organization.type} · {item.role}</small></span><span>{item.organization.name === organizationName ? 'Current' : 'Open'}</span></button>)}<form onSubmit={createOrganization} className="org-create" noValidate><input aria-label="New organization name" value={newOrgName} onChange={(event) => setNewOrgName(event.target.value)} placeholder="New organization"/><button disabled={!newOrgName.trim()} type="submit"><span>+</span> Create organization</button>{orgError && <small className="org-error">{orgError}</small>}</form></div>}
-    </div><div><span className="top-kicker">VersionFlow / <b>{current}</b></span><h1>{current}</h1></div></div><div className="top-actions"><label className="app-search"><Search size={15}/><input aria-label="Search workspace" placeholder="Search workspace"/></label><button className="icon-button notification" aria-label="Notifications"><Bell size={18}/></button><span className="top-avatar">{initials}</span></div></header>
+    </div><div><span className="top-kicker">VersionFlow / <b>{current}</b></span><h1>{current}</h1></div></div><div className="top-actions"><label className="app-search"><Search size={15}/><input aria-label="Search workspace" placeholder="Search workspace"/></label><button className="icon-button notification" aria-label="Notifications"><Bell size={18}/></button><div className="profile-menu-wrap" ref={profileMenuRef}><button type="button" className="top-avatar profile-trigger" aria-label={user ? `Open account menu for ${user.name}` : 'Open account menu'} aria-expanded={profileOpen} aria-haspopup="menu" onClick={() => setProfileOpen((value) => !value)}>{initials}</button>{profileOpen && <div className="profile-menu" role="menu"><div className="profile-summary"><span className="profile-menu-avatar">{initials}</span><span><b>{user?.name || 'VersionFlow user'}</b><small>{user?.email || 'Authenticated workspace'}</small></span></div><div className="profile-menu-divider"/><button type="button" role="menuitem" className="profile-signout" onClick={() => void signOut()} disabled={signingOut} aria-busy={signingOut}><LogOut size={15}/><span>{signingOut ? 'Signing out…' : 'Sign out'}</span></button></div>}</div></div></header>
     <main className={`app-content ${inProject ? 'project-app-content' : ''}`}>{children}</main>
   </div></div>;
 }
