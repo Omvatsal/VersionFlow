@@ -1,8 +1,11 @@
 import { z } from 'zod';
 import { validateEnv } from '@versionflow/shared';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
 
-dotenv.config();
+const envCandidates = [path.resolve(process.cwd(), '.env'), path.resolve(process.cwd(), '../../.env')];
+dotenv.config({ path: envCandidates.find((candidate) => fs.existsSync(candidate)) });
 
 export const WorkerEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),

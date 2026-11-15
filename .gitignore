@@ -19,6 +19,9 @@ blob-report
 .env
 .env.docker
 .env*.local
+.env.development
+.env.production
+.env.test
 !.env.example
 
 
