@@ -14,13 +14,13 @@
     "db:seed:account-demo": "tsx src/seed-account-demo.ts"
   },
   "dependencies": {
+    "@types/node": "^22.10.7",
     "@versionflow/shared": "workspace:*",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.39.1",
     "postgres": "^3.4.5"
   },
   "devDependencies": {
-    "@types/node": "^22.10.7",
     "drizzle-kit": "^0.30.4",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
