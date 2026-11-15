@@ -8,7 +8,7 @@ const registerSchema = z.object({ name: z.string().min(1).max(120), email: z.str
 const loginSchema = z.object({ email: z.string().email(), password: z.string().min(1) });
 @Controller('auth')
 export class AuthController { constructor(private readonly auth: AuthService) {}
-  private cookieOptions(secure: boolean) { return { httpOnly: true, secure, sameSite: 'lax' as const, path: '/' }; }
+  private cookieOptions(secure: boolean) { return { httpOnly: true, secure, sameSite: secure ? ('none' as const) : ('lax' as const), path: '/' }; }
   @Post('register') async register(@Body() body: unknown) { return { success: true, data: await this.auth.register(registerSchema.parse(body)) }; }
   @Post('login') async login(@Body() body: unknown) { const input = loginSchema.parse(body); return { success: true, data: await this.auth.login(input.email, input.password) }; }
   @Post('refresh') refresh(@Headers('x-refresh-token') token?: string) { if (!token) throw new Error('X-Refresh-Token header required'); return this.auth.refresh(token); }
