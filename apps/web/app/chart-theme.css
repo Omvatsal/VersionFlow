@@ -1,0 +1,39 @@
+:root{
+  --chart-orange:#e97849;
+  --chart-blue:#7fa8d6;
+  --chart-violet:#9b8bd3;
+  --chart-emerald:#74b98d;
+  --chart-amber:#d9a65d;
+  --chart-rose:#d87a83;
+  --chart-slate:#8290a6;
+  --chart-endpoints:var(--chart-blue);
+  --chart-activity:var(--chart-emerald);
+  --chart-grid:#30343b;
+  --chart-track:#24282e;
+  --chart-tooltip:#20242a;
+}
+
+@media(prefers-color-scheme:light){
+  :root{
+    --chart-grid:#d7dce3;
+    --chart-track:#e8ebf0;
+    --chart-tooltip:#fff;
+  }
+}
+
+.chart-bar-row>div,.analytics-horizontal-row>div,.analytics-vertical-track{border-radius:3px}
+.chart-bar-row i,.analytics-horizontal-row i,.analytics-vertical-track i{border-radius:3px}
+.chart-bar-row i{background:var(--chart-orange)}
+.chart-bar-row>div,.analytics-horizontal-row>div{background:var(--chart-track)}
+.analytics-vertical-bars{border-bottom-color:var(--chart-grid)}
+.analytics-vertical-track{background:var(--chart-track)}
+.chart-legend i,.impact-legend i,.timeline-dot{box-shadow:0 0 0 3px color-mix(in srgb,currentColor 14%,transparent)}
+.chart-legend i{color:var(--chart-slate)}
+.chart-legend span{min-height:18px;align-items:start}
+.chart-legend b{font-variant-numeric:tabular-nums}
+.chart-bars,.analytics-horizontal-bars,.analytics-vertical-bars{font-variant-numeric:tabular-nums}
+.chart-bar-row,.analytics-horizontal-row,.analytics-vertical-column{position:relative}
+.chart-bar-row::after,.analytics-horizontal-row::after,.analytics-vertical-column::after{content:attr(data-tooltip);position:absolute;z-index:4;left:50%;bottom:calc(100% + 7px);transform:translate(-50%,4px);padding:6px 8px;border:1px solid #3a424d;border-radius:4px;background:var(--chart-tooltip);color:var(--white);font:10px var(--mono);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s ease,transform .15s ease}
+.chart-bar-row:hover::after,.analytics-horizontal-row:hover::after,.analytics-vertical-column:hover::after,.chart-bar-row:focus-within::after,.analytics-horizontal-row:focus-within::after,.analytics-vertical-column:focus-within::after{opacity:1;transform:translate(-50%,0)}
+@media(max-width:700px){.chart-bar-row::after,.analytics-horizontal-row::after,.analytics-vertical-column::after{display:none}}
+@media(prefers-reduced-motion:reduce){.chart-bar-row::after,.analytics-horizontal-row::after,.analytics-vertical-column::after{transition:none}}

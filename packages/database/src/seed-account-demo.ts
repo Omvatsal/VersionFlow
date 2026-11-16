@@ -11,8 +11,34 @@ const ago = (months: number, days = 0) => new Date(Date.now() - months * 30 * 86
 const defs = [
   ['Identity Service', 'identity', 'Identity and account profile primitives.'], ['Authentication Service', 'authentication', 'Authentication, token issuance, and session policy.'], ['Customer Service', 'customer', 'Customer profiles, addresses, and consent preferences.'], ['Product Catalog API', 'catalog', 'Products, categories, merchandising, and product search.'], ['Inventory Service', 'inventory', 'Stock availability and reservation lifecycle.'], ['Cart Service', 'cart', 'Shopping cart state and checkout preparation.'], ['Order Management API', 'orders', 'Order creation, fulfillment state, and cancellation.'], ['Payment Service', 'payments', 'Payment authorization, capture, refunds, and status.'], ['Pricing Service', 'pricing', 'Price books, promotions, tax inputs, and quotes.'], ['Shipping Service', 'shipping', 'Shipment creation, tracking, and delivery estimates.'], ['Notification Service', 'notifications', 'Transactional email, SMS, and event delivery.'], ['Review Service', 'reviews', 'Product reviews, moderation, and ratings.'], ['Recommendation Service', 'recommendations', 'Personalized product recommendations.'], ['Analytics Service', 'analytics', 'Commerce events, aggregates, and reporting.'],
 ] as const;
-const versionCounts = [3, 3, 3, 3, 3, 2, 3, 3, 2, 2, 2, 2, 2, 2];
-const endpointTemplates = [['GET', '', 'listResources', 'List resources', ['200', '401']], ['GET', '/{id}', 'getResource', 'Retrieve a resource', ['200', '404']], ['POST', '', 'createResource', 'Create a resource', ['201', '400', '401']]] as const;
+// Keep the demo ecosystem intentionally uneven so analytics show meaningful differences.
+const versionCounts = [6, 5, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1];
+const endpointCounts = [12, 10, 9, 8, 7, 6, 5, 4, 4, 3, 3, 2, 2, 2];
+const endpointTemplates = [
+  ['GET', '', 'listResources', 'List resources', ['200', '401']],
+  ['GET', '/{id}', 'getResource', 'Retrieve a resource', ['200', '404']],
+  ['POST', '', 'createResource', 'Create a resource', ['201', '400', '401']],
+  ['PUT', '/{id}', 'updateResource', 'Update a resource', ['200', '400', '404']],
+  ['DELETE', '/{id}', 'deleteResource', 'Delete a resource', ['204', '404']],
+  ['GET', '/search', 'searchResources', 'Search resources', ['200', '400']],
+  ['POST', '/{id}/actions', 'runAction', 'Run a resource action', ['202', '400', '409']],
+  ['GET', '/{id}/history', 'getHistory', 'Retrieve resource history', ['200', '404']],
+  ['PATCH', '/{id}', 'patchResource', 'Partially update a resource', ['200', '400', '404']],
+  ['POST', '/bulk', 'bulkCreate', 'Create resources in bulk', ['202', '400']],
+  ['GET', '/metrics', 'getMetrics', 'Retrieve service metrics', ['200', '401']],
+  ['POST', '/validate', 'validateResource', 'Validate a resource', ['200', '422']],
+] as const;
+let activeEndpointCount: number = endpointTemplates.length;
+const allEndpointTemplatesIterator = endpointTemplates[Symbol.iterator].bind(endpointTemplates);
+Object.defineProperty(endpointTemplates, Symbol.iterator, {
+  value: function* () {
+    let index = 0;
+    for (const template of allEndpointTemplatesIterator()) {
+      if (index++ >= activeEndpointCount) break;
+      yield template;
+    }
+  },
+});
 const slug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 async function seed() {
@@ -24,6 +50,7 @@ async function seed() {
   await db.insert(projectCollaborators).values({ projectId: project!.id, userId: user.id, role: 'admin' }).onConflictDoNothing();
   const apiRows: Record<string, typeof apis.$inferSelect> = {}; const versionRows: Record<string, Array<typeof apiVersions.$inferSelect>> = {}; let created = { apis: 0, versions: 0, endpoints: 0, dependencies: 0, events: 0 };
   for (let i = 0; i < defs.length; i++) { const [name, key, description] = defs[i]!; let [api] = await db.select().from(apis).where(and(eq(apis.projectId, project!.id), eq(apis.slug, key))).limit(1); if (!api) { [api] = await db.insert(apis).values({ projectId: project!.id, name, slug: key, description, baseUrl: `https://api.acme.example.com/${key}`, protocol: 'https', tags: [key, 'commerce'], ownerUserId: user.id, lifecycle: i === 3 || i === 4 ? 'deprecated' : i === 13 ? 'draft' : 'active', createdAt: ago(11 - Math.min(i, 8)), updatedAt: ago(i % 4) }).returning(); created.apis++; } apiRows[key] = api!; versionRows[key] = [];
+    activeEndpointCount = endpointCounts[i]!;
     for (let v = 1; v <= versionCounts[i]!; v++) { const version = `${v}.0.0`; let [row] = await db.select().from(apiVersions).where(and(eq(apiVersions.apiId, api!.id), eq(apiVersions.version, version))).limit(1); const deprecated = v < versionCounts[i]!; const draft = i === 13 && v === versionCounts[i]!; const status = draft ? 'draft' : deprecated ? 'deprecated' : 'published'; if (!row) { [row] = await db.insert(apiVersions).values({ apiId: api!.id, version, status, specificationFormat: 'openapi-json', sourceSpecificationVersion: '3.0.3', publishedAt: draft ? null : ago(10 - i + v), deprecatedAt: deprecated ? ago(5 - Math.min(v, 4)) : null, sunsetAt: deprecated && v === 1 ? ago(1) : null, createdAt: ago(10 - Math.min(i, 8) + v), updatedAt: ago(v % 3) }).returning(); created.versions++; } versionRows[key]!.push(row!);
       for (const [method, suffix, op, summary, codes] of endpointTemplates) { const endpointPath = `/${key}${suffix}`; const [existing] = await db.select().from(apiEndpoints).where(and(eq(apiEndpoints.apiVersionId, row!.id), eq(apiEndpoints.method, method), eq(apiEndpoints.path, endpointPath))).limit(1); if (!existing) { await db.insert(apiEndpoints).values({ apiVersionId: row!.id, method, path: endpointPath, operationId: `${op}${slug(name)}`, summary: `${summary} for ${name}`, parameters: suffix ? [{ name: 'id', in: 'path', required: true }] : [{ name: 'X-Request-Id', in: 'header', required: true }], requestSchema: method === 'POST' ? { type: 'object', required: ['data'] } : null, responseSchema: { type: 'object', properties: { data: { type: 'object' } } }, security: [{ bearerAuth: [] }], expectedStatusCodes: codes, createdAt: ago(9 - Math.min(i, 8) + v), updatedAt: ago(v % 2) }); created.endpoints++; } const [endpointEvent] = await db.insert(apiActivityEvents).values({ projectId: project!.id, apiId: api!.id, apiVersionId: row!.id, actorUserId: user.id, eventType: 'endpoint_added', summary: `${name} ${version} added ${method} ${endpointPath}`, metadata: { change: 'endpoint-added' }, seedKey: `acme-commerce:endpoint:${api!.id}:${row!.id}:${method}:${endpointPath}`, occurredAt: ago(9 - Math.min(i, 8) + v) }).onConflictDoNothing().returning(); if (endpointEvent) created.events++; }
       const [event] = await db.insert(apiActivityEvents).values({ projectId: project!.id, apiId: api!.id, apiVersionId: row!.id, actorUserId: user.id, eventType: status === 'published' ? 'version_published' : status === 'deprecated' ? 'version_deprecated' : 'version_created', summary: `${name} ${version} ${status}`, metadata: { scenario: key === 'customer' ? 'customer-breaking-change' : key === 'payments' ? 'payment-migration' : key === 'inventory' ? 'inventory-reservation-migration' : undefined }, seedKey: `acme-commerce:version:${api!.id}:${version}`, occurredAt: ago(10 - Math.min(i, 8) + v) }).onConflictDoNothing().returning(); if (event) created.events++; }

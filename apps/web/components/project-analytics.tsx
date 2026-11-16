@@ -64,6 +64,11 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
     for (const item of data.activity) counts.set(item.eventType, (counts.get(item.eventType) || 0) + 1);
     return [...counts.entries()].map(([label, value]) => ({ label: labelFor(label), value })).sort((a, b) => b.value - a.value);
   }, [data]);
+  const versionStatusCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const item of versionRows) counts.set(item.version.status, (counts.get(item.version.status) || 0) + 1);
+    return [...counts.entries()].map(([label, value]) => ({ label: labelFor(label), value })).sort((a, b) => b.value - a.value);
+  }, [versionRows]);
 
   if (error) return <div className="data-alert" role="alert">{error}</div>;
   if (!data) return <div className="data-state" role="status">Loading project intelligence…</div>;
@@ -73,11 +78,14 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
     <div className="project-hero"><div><p className="page-kicker">Project intelligence</p><h2>Operational overview</h2><p>Signals from the APIs and relationships registered in this project.</p></div></div>
     <div className="analytics-metrics">{cards.map(([label, value, Icon]) => <article key={label}><Icon size={17}/><span>{label}</span><b>{value}</b></article>)}</div>
     <div className="analytics-grid"><section className="workspace-section"><div className="section-title-row"><div><p className="page-kicker">Registry growth</p><h3>APIs registered over time</h3></div></div><BarChart items={data.growth.map((item) => ({ label: new Date(item.date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }), value: item.value }))}/></section><section className="workspace-section"><div className="section-title-row"><div><p className="page-kicker">Lifecycle</p><h3>API status distribution</h3></div></div><DonutChart items={data.lifecycle.map((item) => ({ label: item.lifecycle, value: item.value }))}/></section></div>
-    <div className="analytics-graph-grid">
-      <section className="workspace-section"><div className="section-title-row"><div><p className="page-kicker">API inventory</p><h3>Versions by API</h3></div><span>Registered depth</span></div><HorizontalBars items={apiVersionCounts} color="var(--chart-api)" empty="No API versions recorded yet."/></section>
+    <div className="analytics-graph-grid analytics-inventory-grid">
+      <section className="workspace-section"><div className="section-title-row"><div><p className="page-kicker">API inventory</p><h3>Versions by API</h3></div><span>Registered depth</span></div><HorizontalBars items={apiVersionCounts} color="var(--chart-violet)" empty="No API versions recorded yet."/></section>
       <section className="workspace-section"><div className="section-title-row"><div><p className="page-kicker">Contract surface</p><h3>Endpoints by API</h3></div><span>Known surface area</span></div><HorizontalBars items={endpointCounts} color="var(--chart-endpoints)" empty="No endpoints recorded yet."/></section>
-      <section className="workspace-section"><div className="section-title-row"><div><p className="page-kicker">Dependency signals</p><h3>Relationship mix</h3></div><span>{dependencies.length} total</span></div><VerticalBars items={relationshipCounts} color="var(--chart-dependencies)" empty="No dependency relationships recorded yet."/></section>
-      <section className="workspace-section"><div className="section-title-row"><div><p className="page-kicker">Recent activity</p><h3>Event frequency</h3></div><span>Last 12 events</span></div><VerticalBars items={activityCounts} color="var(--chart-activity)" empty="No activity recorded yet."/></section>
+    </div>
+    <div className="analytics-graph-grid analytics-signal-grid">
+      <section className="workspace-section"><div className="section-title-row"><div><p className="page-kicker">Dependency signals</p><h3>Relationship mix</h3></div><span>{dependencies.length} total</span></div><VerticalBars items={relationshipCounts} color="var(--chart-violet)" empty="No dependency relationships recorded yet." glow={false}/></section>
+      <section className="workspace-section"><div className="section-title-row"><div><p className="page-kicker">Recent activity</p><h3>Event frequency</h3></div><span>Last 12 events</span></div><VerticalBars items={activityCounts} color="var(--chart-blue)" colors={['var(--chart-blue)', 'var(--chart-orange)', 'var(--chart-emerald)', 'var(--chart-amber)', 'var(--chart-violet)']} empty="No activity recorded yet."/></section>
+      <section className="workspace-section"><div className="section-title-row"><div><p className="page-kicker">Release posture</p><h3>Version status mix</h3></div><span>{versionRows.length} total</span></div><VerticalBars items={versionStatusCounts} color="var(--chart-emerald)" colors={['var(--chart-amber)', 'var(--chart-emerald)', 'var(--chart-blue)']} empty="No version statuses recorded yet."/></section>
     </div>
     <section className="workspace-section"><div className="section-title-row"><div><p className="page-kicker">Activity timeline</p><h3>Recent project events</h3></div></div>{data.activity.length ? <div className="activity-list">{data.activity.map((event) => <article key={event.id}><span className="timeline-dot"/><div><b>{event.summary}</b><time>{new Date(event.occurredAt).toLocaleString()}</time></div></article>)}</div> : <div className="empty-state"><b>No activity recorded yet</b><p>Register an API or version to start building project history.</p></div>}</section>
   </div>;

@@ -3,8 +3,10 @@
 import { useMemo, useState } from 'react';
 import { Focus, Maximize2, Network, Search, X } from 'lucide-react';
 import type { EnrichedImpactFinding, ImpactAnalytics } from '@/lib/api-client';
+import { chartColors, severityColors } from './charts/chart-colors';
 
-const colors: Record<string, string> = { critical: '#e56f5d', high: '#d98b54', medium: '#e5aa5d', low: '#81bf91', informational: '#7186a8' };
+const colors = severityColors;
+const riskPalette = [chartColors.blue, chartColors.violet, chartColors.emerald, chartColors.amber, chartColors.rose, chartColors.orange];
 const severityOrder = ['critical', 'high', 'medium', 'low', 'informational'];
 const nice = (value: string) => value.replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 const seriesTotal = (row: ImpactAnalytics['timeSeries'][number]) => severityOrder.reduce((sum, key) => sum + Number(row[key as keyof typeof row] || 0), 0);
@@ -13,7 +15,7 @@ export function SeverityDonut({ items, active, onSelect }: { items: ImpactAnalyt
   const total = items.reduce((sum, item) => sum + item.count, 0);
   let cursor = 0;
   const gradient = items.map((item) => { const start = cursor; cursor += total ? item.count / total * 100 : 0; return `${colors[item.name]} ${start}% ${cursor}%`; }).join(',');
-  return <ChartFrame title="Impact severity distribution" subtitle="Finding volume and share by recorded severity."><div className="impact-donut-layout"><button className="impact-donut" style={{ background: total ? `conic-gradient(${gradient})` : '#252525' }} onClick={() => onSelect('all')} aria-label={`All severities, ${total} findings`}><span><b>{total}</b>findings</span></button><div className="impact-legend">{items.map((item) => <button key={item.name} className={active === item.name ? 'active' : ''} onClick={() => onSelect(active === item.name ? 'all' : item.name)}><i style={{ background: colors[item.name] }}/><span>{nice(item.name)}<small>{total ? Math.round(item.count / total * 100) : 0}%</small></span><b>{item.count}</b></button>)}</div></div></ChartFrame>;
+  return <ChartFrame title="Impact severity distribution" subtitle="Finding volume and share by recorded severity."><div className="impact-donut-layout"><button className="impact-donut" style={{ background: total ? `conic-gradient(${gradient})` : '#252525' }} onClick={() => onSelect('all')} aria-label={`All severities, ${total} findings`}><span><b>{total}</b>findings</span></button><div className="impact-legend">{items.map((item) => <button key={item.name} className={active === item.name ? 'active' : ''} onClick={() => onSelect(active === item.name ? 'all' : item.name)}><i style={{ background: colors[item.name], color: colors[item.name] }}/><span>{nice(item.name)}<small>{total ? Math.round(item.count / total * 100) : 0}%</small></span><b>{item.count}</b></button>)}</div></div></ChartFrame>;
 }
 
 export function ImpactOverTime({ rows }: { rows: ImpactAnalytics['timeSeries'] }) {
@@ -34,12 +36,12 @@ export function PropagationDepth({ rows }: { rows: ImpactAnalytics['depth'] }) {
 
 export function RiskBubbleChart({ rows, onSelect }: { rows: ImpactAnalytics['apiRisk']; onSelect: (apiId: string) => void }) {
   const maxX = Math.max(1, ...rows.map((item) => item.upstreamApis)); const maxY = Math.max(1, ...rows.map((item) => item.findings)); const maxSize = Math.max(1, ...rows.map((item) => item.affectedEndpoints));
-  return <ChartFrame title="Most affected APIs" subtitle="Upstream exposure, finding volume, affected endpoints, and peak severity.">{rows.length ? <div className="impact-bubble-plot"><span className="axis-y">Impact findings</span><span className="axis-x">Upstream APIs affected</span>{rows.map((item) => { const size = 34 + item.affectedEndpoints / maxSize * 34; return <button key={item.apiId} onClick={() => onSelect(item.apiId)} style={{ left: `${8 + item.upstreamApis / maxX * 82}%`, bottom: `${10 + item.findings / maxY * 74}%`, width: size, height: size, background: `${colors[item.highestSeverity]}33`, borderColor: colors[item.highestSeverity] }} title={`${item.name}: ${item.findings} findings, ${item.upstreamApis} upstream APIs, ${item.affectedEndpoints} affected endpoints`}><span>{item.name.slice(0, 3).toUpperCase()}</span></button>; })}</div> : <EmptyChart text="No affected APIs are available for bubble analysis." />}</ChartFrame>;
+  return <ChartFrame title="Most affected APIs" subtitle="Upstream exposure, finding volume, affected endpoints, and peak severity.">{rows.length ? <div className="impact-bubble-plot"><span className="axis-y">Impact findings</span><span className="axis-x">Upstream APIs affected</span>{rows.map((item, index) => { const size = 34 + item.affectedEndpoints / maxSize * 34; const color = riskPalette[index % riskPalette.length]!; return <button key={item.apiId} onClick={() => onSelect(item.apiId)} style={{ left: `${8 + item.upstreamApis / maxX * 82}%`, bottom: `${10 + item.findings / maxY * 74}%`, width: size, height: size, background: `${color}33`, borderColor: color }} title={`${item.name}: ${item.findings} findings, ${item.upstreamApis} upstream APIs, ${item.affectedEndpoints} affected endpoints`}><span>{item.name.slice(0, 3).toUpperCase()}</span></button>; })}</div> : <EmptyChart text="No affected APIs are available for bubble analysis." />}</ChartFrame>;
 }
 
 export function RiskTreemap({ rows, onSelect }: { rows: ImpactAnalytics['apiRisk']; onSelect: (apiId: string) => void }) {
   const total = rows.reduce((sum, item) => sum + item.findings, 0);
-  return <ChartFrame title="API risk concentration" subtitle="Rectangle area represents finding concentration; color represents peak severity.">{rows.length ? <div className="impact-treemap">{rows.map((item) => <button key={item.apiId} onClick={() => onSelect(item.apiId)} style={{ flexGrow: Math.max(1, item.findings), flexBasis: `${Math.max(24, total ? item.findings / total * 100 : 25)}%`, borderColor: colors[item.highestSeverity], background: `${colors[item.highestSeverity]}18` }}><b>{item.name}</b><span>{item.findings} findings</span><small>{nice(item.highestSeverity)}</small></button>)}</div> : <EmptyChart text="No API risk concentration can be calculated yet." />}</ChartFrame>;
+  return <ChartFrame title="API risk concentration" subtitle="Rectangle area represents finding concentration; color distinguishes API groups.">{rows.length ? <div className="impact-treemap">{rows.map((item, index) => { const color = riskPalette[index % riskPalette.length]!; return <button key={item.apiId} onClick={() => onSelect(item.apiId)} style={{ flexGrow: Math.max(1, item.findings), flexBasis: `${Math.max(24, total ? item.findings / total * 100 : 25)}%`, borderColor: color, background: `${color}18` }}><b>{item.name}</b><span>{item.findings} findings</span><small>{nice(item.highestSeverity)}</small></button>; })}</div> : <EmptyChart text="No API risk concentration can be calculated yet." />}</ChartFrame>;
 }
 
 export function CategorySeverity({ rows, activeSeverity, onSeverity }: { rows: ImpactAnalytics['categorySeverity']; activeSeverity: string; onSeverity: (value: string) => void }) {

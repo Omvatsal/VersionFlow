@@ -3,6 +3,7 @@ import './globals.css';
 import './project-admin.css';
 import './contract-viewer.css';
 import './impact-intelligence.css';
+import './chart-overrides.css';
 
 export const metadata: Metadata = {
   title: 'VersionFlow — Change APIs with confidence',

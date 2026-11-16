@@ -9,6 +9,13 @@ colors:
   orange: "#ff6b2c"
   muted: "#8b8b8b"
   success: "#81bf91"
+  chart:
+    orange: "#e97849"
+    blue: "#7fa8d6"
+    violet: "#9b8bd3"
+    emerald: "#74b98d"
+    amber: "#d9a65d"
+    rose: "#d87a83"
 typography:
   display:
     fontFamily: "Space Grotesk, Arial, sans-serif"

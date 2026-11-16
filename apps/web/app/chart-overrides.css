@@ -1,0 +1,82 @@
+/* Shared semantic chart colors for the SVG and impact visualizations. */
+.impact-group-bars .direct{background:var(--chart-orange)}
+.impact-group-bars .transitive{background:var(--chart-violet)}
+.impact-depth .apis{background:var(--chart-violet)}
+.impact-depth .paths{background:var(--chart-blue)}
+.impact-resolution-timeline i{background:var(--chart-emerald)}
+.impact-graph-canvas rect.root{fill:color-mix(in srgb,var(--chart-orange) 14%,#141414);stroke:var(--chart-orange)}
+.impact-graph-canvas rect.direct{fill:color-mix(in srgb,var(--chart-emerald) 14%,#141414);stroke:var(--chart-emerald)}
+.impact-graph-canvas rect.transitive{fill:color-mix(in srgb,var(--chart-violet) 10%,#141414);stroke:var(--chart-violet)}
+.graph-svg-node.active rect{stroke:var(--chart-emerald)}
+.graph-svg-node.draft rect{stroke:var(--chart-blue)}
+.graph-svg-node.deprecated rect{stroke:var(--chart-amber)}
+.graph-svg-node.sunset rect{stroke:var(--chart-rose)}
+.graph-svg-edge path,.legend-line{stroke:var(--chart-violet);background:var(--chart-violet)}
+.graph-detail h4 em,.graph-detail-row small{color:var(--chart-violet)}
+.breaking-severity.critical{background:var(--chart-rose)}
+.breaking-severity.high,.breaking-severity.medium{background:var(--chart-amber)}
+.breaking-severity.low{background:var(--chart-emerald)}
+
+/* Data-dense chart surfaces: stronger hierarchy without changing values. */
+.chart-bars,.analytics-horizontal-bars,.analytics-vertical-bars{padding-top:8px}
+.chart-bar-row,.analytics-horizontal-row{min-height:28px}
+.chart-bar-row>span,.analytics-horizontal-row>span{font-size:11px;color:#b9c0ca}
+.chart-bar-row>div,.analytics-horizontal-row>div{height:11px;border:1px solid #303842;box-shadow:inset 0 1px 0 #ffffff08}
+.chart-bar-row i,.analytics-horizontal-row i{box-shadow:0 0 14px color-mix(in srgb,currentColor 18%,transparent);transition:width .25s ease,filter .2s ease}
+.chart-bar-row:hover i,.analytics-horizontal-row:hover i{filter:brightness(1.12)}
+.chart-bar-row b,.analytics-horizontal-row b,.analytics-vertical-column>b{font-variant-numeric:tabular-nums;color:#f2f4f7}
+.analytics-vertical-bars{gap:14px;min-height:176px;padding:10px 8px 3px;border-bottom:1px solid var(--chart-grid);background:linear-gradient(to top,transparent 24%,var(--chart-grid) 25%,transparent 25%,transparent 49%,var(--chart-grid) 50%,transparent 50%,transparent 74%,var(--chart-grid) 75%,transparent 75%)}
+.analytics-vertical-column{height:158px;grid-template-rows:18px 1fr 30px}
+.analytics-vertical-track{border:0;background:transparent;box-shadow:none}
+.analytics-vertical-track i{box-shadow:0 0 14px color-mix(in srgb,currentColor 32%,transparent);transition:height .25s ease,filter .2s ease}
+.analytics-vertical-bars--flat .analytics-vertical-track i{box-shadow:none}
+.analytics-vertical-column:hover .analytics-vertical-track i{filter:brightness(1.12)}
+.analytics-vertical-column>span{font-size:9px;color:#aeb6c2}
+.donut-layout{gap:30px;padding:26px 24px}
+.donut{box-shadow:0 0 0 1px #ffffff0c,0 10px 24px #0005;filter:drop-shadow(0 0 12px color-mix(in srgb,var(--chart-violet) 22%,transparent))}
+.chart-legend{gap:10px}
+.chart-legend span{padding:5px 6px;border-radius:4px}
+.chart-legend span:hover{background:#ffffff08}
+.chart-legend span,.donut{position:relative}
+.chart-legend span::after,.donut::before{content:attr(data-tooltip);position:absolute;z-index:5;left:50%;bottom:calc(100% + 7px);transform:translate(-50%,4px);padding:6px 8px;border:1px solid #3a424d;border-radius:4px;background:var(--chart-tooltip);color:var(--white);font:10px var(--mono);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s ease,transform .15s ease}
+.chart-legend span:hover::after,.donut:hover::before{opacity:1;transform:translate(-50%,0)}
+@media(max-width:700px){.donut-layout{gap:18px;padding:20px 14px}.analytics-vertical-bars{gap:8px;padding-inline:2px}}
+@media(max-width:700px){.chart-legend span::after,.donut::before{display:none}}
+@media(prefers-reduced-motion:reduce){.chart-bar-row i,.analytics-horizontal-row i,.analytics-vertical-track i,.chart-legend span::after,.donut::before{transition:none}}
+
+/* Shared chart atmosphere: use the same restrained glow across product analytics. */
+.chart-bars i,.analytics-horizontal-row i,.analytics-vertical-track i,
+.impact-group-bars i,.impact-depth i,.impact-time-chart i,.impact-stack i,
+.impact-category-chart button,.impact-resolution-timeline i,.impact-treemap button,
+.impact-bubble-plot button,.impact-matrix-row button{filter:drop-shadow(0 0 7px currentColor)}
+.impact-chart-card,.workspace-section:has(.chart-bars),.workspace-section:has(.analytics-horizontal-bars),.workspace-section:has(.analytics-vertical-bars){box-shadow:0 0 18px #7fa8d61a}
+.impact-graph-canvas rect{filter:drop-shadow(0 0 5px currentColor)}
+.impact-graph-canvas path{filter:drop-shadow(0 0 3px currentColor)}
+.impact-graph-canvas{box-shadow:inset 0 0 24px #7fa8d60d}
+.analytics-vertical-bars--flat .analytics-vertical-track i{filter:none}
+
+/* Final intensity pass: ambient, low-contrast polish rather than neon glow. */
+.chart-bars i,.analytics-horizontal-row i,.analytics-vertical-track i,
+.impact-group-bars i,.impact-depth i,.impact-time-chart i,.impact-stack i,
+.impact-category-chart button,.impact-resolution-timeline i,.impact-treemap button,
+.impact-bubble-plot button,.impact-matrix-row button{filter:drop-shadow(0 0 2px color-mix(in srgb,currentColor 20%,transparent))}
+.impact-chart-card,.workspace-section:has(.chart-bars),.workspace-section:has(.analytics-horizontal-bars),.workspace-section:has(.analytics-vertical-bars){box-shadow:0 0 12px #7fa8d60a}
+.impact-graph-canvas rect{filter:drop-shadow(0 0 2px color-mix(in srgb,currentColor 18%,transparent))}
+.impact-graph-canvas path{filter:none}
+.impact-graph-canvas{box-shadow:inset 0 0 16px #7fa8d606}
+
+/* Glow is reserved for bar and pie marks. Dependency/network visuals stay crisp. */
+.analytics-vertical-bars--flat,.workspace-section:has(.analytics-vertical-bars--flat){box-shadow:none;filter:none}
+.impact-graph-canvas,.impact-graph-canvas *{filter:none;box-shadow:none;text-shadow:none}
+.impact-bubble-plot{box-shadow:inset 0 0 14px #7fa8d608,0 0 8px #7fa8d608}
+.impact-bubble-plot button{filter:none;text-shadow:none;box-shadow:0 0 3px currentColor}
+.impact-bubble-plot .axis-x,.impact-bubble-plot .axis-y{filter:none;text-shadow:none}
+.impact-chart-card:has(.impact-bubble-plot){box-shadow:none}
+.impact-chart-card:has(.impact-depth),.impact-chart-card:has(.impact-graph-canvas){box-shadow:none}
+.impact-chart-card:has(.impact-depth) .impact-chart-body,.impact-chart-card:has(.impact-graph-canvas) .impact-chart-body{box-shadow:none}
+.analytics-vertical-track i,.analytics-vertical-bars .analytics-vertical-track i{filter:none;box-shadow:none}
+.workspace-section:has(.analytics-vertical-bars){box-shadow:none}
+.impact-bubble-plot button,.impact-treemap button,.impact-matrix-row button{filter:none;text-shadow:none}
+.impact-bubble-plot button{box-shadow:0 0 4px color-mix(in srgb,currentColor 24%,transparent)}
+.impact-treemap button,.impact-matrix-row button{box-shadow:none}
+.impact-treemap b,.impact-treemap span,.impact-treemap small,.impact-matrix-row strong,.impact-matrix-row button,.impact-bubble-plot button span{filter:none;text-shadow:none}
