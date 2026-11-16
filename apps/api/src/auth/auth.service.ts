@@ -48,7 +48,12 @@ export class AuthService {
     const [linked] = await db.select({ user: users }).from(oauthAccounts).innerJoin(users, eq(users.id, oauthAccounts.userId)).where(and(eq(oauthAccounts.provider, 'github'), eq(oauthAccounts.providerAccountId, providerId))).limit(1);
     if (linked) return { user: { id: linked.user.id, name: linked.user.name, email: linked.user.email }, tokens: await this.tokens(linked.user.id) };
     const email = verified.email.toLowerCase(); const [existing] = await db.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
-    if (existing) throw new ConflictException('A password account already exists for this email. Sign in first and link GitHub from account settings.');
+    if (existing) {
+      await db.insert(oauthAccounts).values({ userId: existing.id, provider: 'github', providerAccountId: providerId, providerEmail: email, providerUsername: identity.login, profileUrl: identity.html_url, avatarUrl: identity.avatar_url });
+      const [user] = await db.select({ id: users.id, name: users.name, email: users.email }).from(users).where(eq(users.id, existing.id)).limit(1);
+      if (!user) throw new UnauthorizedException('GitHub account could not be linked');
+      return { user, tokens: await this.tokens(user.id) };
+    }
     const result = await db.transaction(async (tx) => { const [user] = await tx.insert(users).values({ name: identity.name?.trim() || identity.login, email, passwordHash: `oauth:${randomBytes(32).toString('hex')}` }).returning({ id: users.id, name: users.name, email: users.email }); const slug = `${identity.login.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'workspace'}-${user!.id.slice(0, 8)}`; const [org] = await tx.insert(organizations).values({ name: `${user!.name}'s Workspace`, slug, type: 'personal', createdBy: user!.id }).returning({ id: organizations.id, name: organizations.name, type: organizations.type }); await tx.insert(organizationMemberships).values({ organizationId: org!.id, userId: user!.id, role: 'owner' }); await tx.insert(oauthAccounts).values({ userId: user!.id, provider: 'github', providerAccountId: providerId, providerEmail: email, providerUsername: identity.login, profileUrl: identity.html_url, avatarUrl: identity.avatar_url }); return { user: user!, organization: org! }; });
     return { ...result, tokens: await this.tokens(result.user.id) };
   }
