@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { randomBytes, timingSafeEqual } from 'crypto';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
@@ -17,7 +17,14 @@ export class AuthController { constructor(private readonly auth: AuthService) {}
   }
   @Post('register') async register(@Body() body: unknown, @Res({ passthrough: true }) response: Response) { const result = await this.auth.register(registerSchema.parse(body)); this.setSessionCookies(response, result.tokens); return { success: true, data: result }; }
   @Post('login') async login(@Body() body: unknown, @Res({ passthrough: true }) response: Response) { const input = loginSchema.parse(body); const result = await this.auth.login(input.email, input.password); this.setSessionCookies(response, result.tokens); return { success: true, data: result }; }
-  @Post('refresh') refresh(@Headers('x-refresh-token') token?: string) { if (!token) throw new Error('X-Refresh-Token header required'); return this.auth.refresh(token); }
+  @Post('refresh') async refresh(@Req() request: Request, @Headers('x-refresh-token') token: string | undefined, @Res({ passthrough: true }) response: Response) {
+    const cookieToken = request.headers.cookie?.split(';').map((part) => part.trim()).find((part) => part.startsWith('versionflow_refresh_token='))?.split('=')[1];
+    const refreshToken = token || cookieToken;
+    if (!refreshToken) throw new UnauthorizedException('Refresh token required');
+    const result = await this.auth.refresh(refreshToken);
+    this.setSessionCookies(response, result);
+    return result;
+  }
   @Post('logout') async logout(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
     const bearer = request.headers.authorization?.startsWith('Bearer ') ? request.headers.authorization.slice(7) : undefined;
     const cookieToken = request.headers.cookie?.split(';').map((part) => part.trim()).find((part) => part.startsWith('versionflow_access_token='))?.split('=')[1];

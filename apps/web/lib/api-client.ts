@@ -33,6 +33,7 @@ export class ApiClientError extends Error {
 
 export class ApiClient {
   private readonly baseUrl: string;
+  private refreshPromise: Promise<boolean> | null = null;
 
   constructor(baseUrl?: string) {
     this.baseUrl =
@@ -41,7 +42,33 @@ export class ApiClient {
       'http://localhost:4000/api/v1';
   }
 
-  private async request<T>(path: string, options?: RequestInit): Promise<ApiResponse<T>> {
+  private async refreshSession(): Promise<boolean> {
+    if (this.refreshPromise) return this.refreshPromise;
+    this.refreshPromise = (async () => {
+      const refreshToken = typeof window !== 'undefined' ? window.localStorage.getItem('versionflow_refresh_token') : null;
+      try {
+        const response = await fetch(`${this.baseUrl}/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: refreshToken ? { 'X-Refresh-Token': refreshToken } : undefined,
+        });
+        if (!response.ok) return false;
+        const body = await response.json() as AuthTokens | { data?: AuthTokens };
+        const tokens = 'data' in body && body.data ? body.data : body as AuthTokens;
+        if (!tokens.accessToken || !tokens.refreshToken || typeof window === 'undefined') return false;
+        window.localStorage.setItem('versionflow_access_token', tokens.accessToken);
+        window.localStorage.setItem('versionflow_refresh_token', tokens.refreshToken);
+        return true;
+      } catch {
+        return false;
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+    return this.refreshPromise;
+  }
+
+  private async request<T>(path: string, options?: RequestInit, allowRefresh = true): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
     try {
       const response = await fetch(url, {
@@ -60,6 +87,14 @@ export class ApiClient {
       const body = await response.json() as ApiResponse<T> | T | { message?: string | string[]; error?: string };
 
       if (!response.ok) {
+        if (response.status === 401 && allowRefresh && path !== '/auth/refresh' && path !== '/auth/logout') {
+          const refreshed = await this.refreshSession();
+          if (refreshed) return this.request<T>(path, options, false);
+          if (typeof window !== 'undefined') {
+            window.localStorage.removeItem('versionflow_access_token');
+            window.localStorage.removeItem('versionflow_refresh_token');
+          }
+        }
         const apiError = body as { error?: { code?: string; message?: string } | string; message?: string | string[] };
         const message = Array.isArray(apiError.message) ? apiError.message.join(', ') : apiError.message || (typeof apiError.error === 'string' ? apiError.error : apiError.error?.message) || `Request failed with status ${response.status}`;
         return { success: false, error: { code: typeof apiError.error === 'object' ? apiError.error?.code || 'HTTP_ERROR' : 'HTTP_ERROR', message } };
