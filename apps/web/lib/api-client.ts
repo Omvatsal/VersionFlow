@@ -98,7 +98,7 @@ export class ApiClient {
     login: (input: { email: string; password: string }) => this.request<{ user: AuthUser; tokens: AuthTokens }>('/auth/login', { method: 'POST', body: JSON.stringify(input) }),
     register: (input: { name: string; email: string; password: string }) => this.request<{ user: AuthUser; organization: { id: string; name: string }; tokens: AuthTokens }>('/auth/register', { method: 'POST', body: JSON.stringify(input) }),
     me: () => this.request<AuthUser>('/auth/me'),
-    logout: () => this.request<{ success: boolean }>('/auth/logout', { method: 'POST' }),
+    logout: (accessToken?: string) => this.request<{ success: boolean }>('/auth/logout', { method: 'POST', ...(accessToken ? { headers: { Authorization: `Bearer ${accessToken}` } } : {}) }),
   };
 
   readonly organizations = {

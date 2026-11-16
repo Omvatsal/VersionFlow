@@ -77,12 +77,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   async function signOut() {
     if (signingOut) return;
     setSigningOut(true);
+    const accessToken = window.localStorage.getItem('versionflow_access_token');
+    window.localStorage.removeItem('versionflow_access_token');
+    window.localStorage.removeItem('versionflow_refresh_token');
     try {
-      await apiClient.auth.logout();
+      await apiClient.auth.logout(accessToken || undefined);
     } finally {
-      window.localStorage.removeItem('versionflow_access_token');
-      window.localStorage.removeItem('versionflow_refresh_token');
       router.replace('/auth/login');
+      router.refresh();
     }
   }
 

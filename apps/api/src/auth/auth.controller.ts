@@ -12,7 +12,24 @@ export class AuthController { constructor(private readonly auth: AuthService) {}
   @Post('register') async register(@Body() body: unknown) { return { success: true, data: await this.auth.register(registerSchema.parse(body)) }; }
   @Post('login') async login(@Body() body: unknown) { const input = loginSchema.parse(body); return { success: true, data: await this.auth.login(input.email, input.password) }; }
   @Post('refresh') refresh(@Headers('x-refresh-token') token?: string) { if (!token) throw new Error('X-Refresh-Token header required'); return this.auth.refresh(token); }
-  @UseGuards(AuthGuard) @Post('logout') async logout(@Req() request: AuthenticatedRequest, @Res({ passthrough: true }) response: Response) { await this.auth.logout(request.user.sessionId); response.clearCookie('versionflow_access_token', { path: '/' }); response.clearCookie('versionflow_refresh_token', { path: '/' }); return { success: true }; }
+  @Post('logout') async logout(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
+    const bearer = request.headers.authorization?.startsWith('Bearer ') ? request.headers.authorization.slice(7) : undefined;
+    const cookieToken = request.headers.cookie?.split(';').map((part) => part.trim()).find((part) => part.startsWith('versionflow_access_token='))?.split('=')[1];
+    const tokens = [...new Set([bearer, cookieToken].filter((token): token is string => Boolean(token)))];
+    for (const token of tokens) {
+      try {
+        const claims = this.auth.verifyAccessToken(token);
+        await this.auth.logout(claims.sessionId);
+        break;
+      } catch {
+        // Try the other credential, then keep logout idempotent for expired sessions.
+      }
+    }
+    const secure = process.env['NODE_ENV'] === 'production';
+    response.clearCookie('versionflow_access_token', this.cookieOptions(secure));
+    response.clearCookie('versionflow_refresh_token', this.cookieOptions(secure));
+    return { success: true };
+  }
   @UseGuards(AuthGuard) @Get('me') async me(@Req() request: AuthenticatedRequest) { return { success: true, data: await this.auth.currentUser(request.user.id) }; }
   @Get('google') google(@Res() response: Response) { const state = randomBytes(32).toString('base64url'); const url = this.auth.googleAuthorizationUrl(state); response.cookie('versionflow_oauth_state', state, { ...this.cookieOptions(process.env['NODE_ENV'] === 'production'), maxAge: 10 * 60 * 1000 }); return response.redirect(url); }
   @Get('google/callback') async googleCallback(@Req() request: Request, @Res() response: Response) { const code = typeof request.query.code === 'string' ? request.query.code : ''; const state = typeof request.query.state === 'string' ? request.query.state : ''; const saved = request.headers.cookie?.split(';').map((part) => part.trim()).find((part) => part.startsWith('versionflow_oauth_state='))?.split('=')[1] ?? ''; if (!code || !state || !saved || state.length !== saved.length || !timingSafeEqual(Buffer.from(state), Buffer.from(saved))) return response.status(400).send('Invalid OAuth state'); try { const result = await this.auth.loginWithGoogle(code); const secure = process.env['NODE_ENV'] === 'production'; response.cookie('versionflow_access_token', result.tokens.accessToken, { ...this.cookieOptions(secure), maxAge: 15 * 60 * 1000 }); response.cookie('versionflow_refresh_token', result.tokens.refreshToken, { ...this.cookieOptions(secure), maxAge: 30 * 24 * 60 * 60 * 1000 }); response.clearCookie('versionflow_oauth_state', { path: '/' }); return response.redirect(`${this.auth.frontendUrl()}/dashboard`); } catch (error: unknown) { const message = error instanceof Error ? error.message : 'Google authentication failed'; return response.redirect(`${this.auth.frontendUrl()}/auth/login?error=${encodeURIComponent(message)}`); } }
