@@ -9,8 +9,14 @@ const loginSchema = z.object({ email: z.string().email(), password: z.string().m
 @Controller('auth')
 export class AuthController { constructor(private readonly auth: AuthService) {}
   private cookieOptions(secure: boolean) { return { httpOnly: true, secure, sameSite: secure ? ('none' as const) : ('lax' as const), path: '/' }; }
-  @Post('register') async register(@Body() body: unknown) { return { success: true, data: await this.auth.register(registerSchema.parse(body)) }; }
-  @Post('login') async login(@Body() body: unknown) { const input = loginSchema.parse(body); return { success: true, data: await this.auth.login(input.email, input.password) }; }
+  private setSessionCookies(response: Response, tokens: { accessToken: string; refreshToken: string }) {
+    const secure = process.env['NODE_ENV'] === 'production';
+    const options = this.cookieOptions(secure);
+    response.cookie('versionflow_access_token', tokens.accessToken, { ...options, maxAge: 15 * 60 * 1000 });
+    response.cookie('versionflow_refresh_token', tokens.refreshToken, { ...options, maxAge: 30 * 24 * 60 * 60 * 1000 });
+  }
+  @Post('register') async register(@Body() body: unknown, @Res({ passthrough: true }) response: Response) { const result = await this.auth.register(registerSchema.parse(body)); this.setSessionCookies(response, result.tokens); return { success: true, data: result }; }
+  @Post('login') async login(@Body() body: unknown, @Res({ passthrough: true }) response: Response) { const input = loginSchema.parse(body); const result = await this.auth.login(input.email, input.password); this.setSessionCookies(response, result.tokens); return { success: true, data: result }; }
   @Post('refresh') refresh(@Headers('x-refresh-token') token?: string) { if (!token) throw new Error('X-Refresh-Token header required'); return this.auth.refresh(token); }
   @Post('logout') async logout(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
     const bearer = request.headers.authorization?.startsWith('Bearer ') ? request.headers.authorization.slice(7) : undefined;

@@ -1,13 +1,15 @@
 'use client';
 
 import { FormEvent, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Bell, ChevronDown, LogOut, Search } from 'lucide-react';
+import { Bell, ChevronDown, LogOut, Menu, Search, X } from 'lucide-react';
 import { apiClient, type AuthUser, type OrganizationListItem } from '@/lib/api-client';
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [orgOpen, setOrgOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
@@ -18,6 +20,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const inProject = pathname.includes('/projects/');
+  const projectId = inProject ? pathname.split('/')[3] : undefined;
   const current = inProject ? 'Project workspace' : 'Projects';
   const initials = user?.name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'VF';
 
@@ -36,6 +39,15 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [profileOpen]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setMobileNavOpen(false);
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [mobileNavOpen]);
 
   useEffect(() => {
     const handleOrganizationChange = (event: Event) => setOrganizationName((event as CustomEvent<string>).detail);
@@ -89,10 +101,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
   return <div className="app-shell"><div className="app-main">
-    <header className="app-topbar"><div className="topbar-context"><div className="org-selector-wrap">
+    <header className="app-topbar"><div className="topbar-context"><button type="button" className="mobile-menu-button" aria-label={mobileNavOpen ? 'Close workspace navigation' : 'Open workspace navigation'} aria-expanded={mobileNavOpen} onClick={() => setMobileNavOpen((value) => !value)}>{mobileNavOpen ? <X size={19}/> : <Menu size={19}/>}</button><div className="org-selector-wrap">
       <button className="org-selector" onClick={() => setOrgOpen((value) => !value)} aria-expanded={orgOpen} aria-haspopup="menu"><span className="workspace-avatar">{organizationName[0]?.toUpperCase() || 'O'}</span><span><small>Organization</small><b>{organizationName}</b></span><ChevronDown size={14}/></button>
       {orgOpen && <div className="org-menu" role="menu"><p>Switch organization</p>{organizations.map((item) => <button type="button" role="menuitem" key={item.organization.id} className={item.organization.name === organizationName ? 'selected' : ''} onClick={() => selectOrganization(item)}><span><b>{item.organization.name}</b><small>{item.organization.type} · {item.role}</small></span><span>{item.organization.name === organizationName ? 'Current' : 'Open'}</span></button>)}<form onSubmit={createOrganization} className="org-create" noValidate><input aria-label="New organization name" value={newOrgName} onChange={(event) => setNewOrgName(event.target.value)} placeholder="New organization"/><button disabled={!newOrgName.trim()} type="submit"><span>+</span> Create organization</button>{orgError && <small className="org-error">{orgError}</small>}</form></div>}
     </div><div><span className="top-kicker">VersionFlow / <b>{current}</b></span><h1>{current}</h1></div></div><div className="top-actions"><label className="app-search"><Search size={15}/><input aria-label="Search workspace" placeholder="Search workspace"/></label><button className="icon-button notification" aria-label="Notifications"><Bell size={18}/></button><div className="profile-menu-wrap" ref={profileMenuRef}><button type="button" className="top-avatar profile-trigger" aria-label={user ? `Open account menu for ${user.name}` : 'Open account menu'} aria-expanded={profileOpen} aria-haspopup="menu" onClick={() => setProfileOpen((value) => !value)}>{initials}</button>{profileOpen && <div className="profile-menu" role="menu"><div className="profile-summary"><span className="profile-menu-avatar">{initials}</span><span><b>{user?.name || 'VersionFlow user'}</b><small>{user?.email || 'Authenticated workspace'}</small></span></div><div className="profile-menu-divider"/><button type="button" role="menuitem" className="profile-signout" onClick={() => void signOut()} disabled={signingOut} aria-busy={signingOut}><LogOut size={15}/><span>{signingOut ? 'Signing out…' : 'Sign out'}</span></button></div>}</div></div></header>
+    {mobileNavOpen && <><button type="button" className="mobile-nav-backdrop" aria-label="Close workspace navigation" onClick={() => setMobileNavOpen(false)}/><nav className="mobile-nav" aria-label="Workspace navigation"><p className="mobile-nav-kicker">VersionFlow</p><Link href="/dashboard" className={!inProject ? 'active' : ''} onClick={() => setMobileNavOpen(false)}><span>Workspace</span><small>Organizations and projects</small></Link>{inProject && projectId && <Link href={`/dashboard/projects/${projectId}`} className="active" onClick={() => setMobileNavOpen(false)}><span>Project overview</span><small>Return to this project</small></Link>}<div className="mobile-nav-note">{inProject ? 'Use Project navigation below the header for APIs, dependencies, analysis, and settings.' : 'Open a project from your workspace to see its tools.'}</div></nav></>}
     <main className={`app-content ${inProject ? 'project-app-content' : ''}`}>{children}</main>
   </div></div>;
 }
