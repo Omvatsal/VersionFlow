@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" name="OrdersService">
+  <service name="OrdersService">
+    <port name="OrdersPort" binding="tns:OrdersBinding" />
+  </service>
+  <portType name="OrdersPortType">
+    <operation name="GetOrder" />
+    <operation name="CreateOrder" />
+    <operation name="UpdateOrder" />
+    <operation name="CancelOrder" />
+  </portType>
+</definitions>

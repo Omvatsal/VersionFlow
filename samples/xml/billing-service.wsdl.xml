@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" name="BillingService">
+  <service name="BillingService">
+    <port name="BillingPort" binding="tns:BillingBinding" />
+  </service>
+  <portType name="BillingPortType">
+    <operation name="GetInvoice" />
+    <operation name="CreateInvoice" />
+    <operation name="CancelInvoice" />
+  </portType>
+</definitions>

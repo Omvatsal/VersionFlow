@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns="http://www.w3.org/ns/wsdl" name="InventoryService">
+  <interface name="InventoryInterface">
+    <operation name="GetStock" />
+    <operation name="ReserveStock" />
+    <operation name="ReleaseStock" />
+  </interface>
+</description>

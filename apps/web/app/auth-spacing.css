@@ -1,1 +1,8 @@
 .auth-provider-buttons{display:grid;gap:10px}
+
+@media(max-width:600px){
+  .auth-page{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100dvh;padding:20px 14px 28px}
+  .auth-back{position:static;order:-1;width:min(100%,410px);margin:0 auto 16px}
+  .auth-card{padding:26px 20px;width:min(100%,410px)}
+  .auth-heading{margin:40px 0 24px}
+}
